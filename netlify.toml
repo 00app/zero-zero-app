@@ -4,9 +4,19 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  NPM_VERSION = "8"
   VITE_SUPABASE_URL = "your-supabase-url"
   VITE_SUPABASE_ANON_KEY = "your-supabase-anon-key"
   VITE_WATER_API_URL = "https://www.waterqualitydata.us/data/Result/search"
+
+[context.production]
+  command = "npm ci && npm run build"
+
+[context.deploy-preview]
+  command = "npm ci && npm run build"
+
+[context.branch-deploy]
+  command = "npm ci && npm run build"
 
 [[redirects]]
   from = "/*"
@@ -34,5 +44,10 @@
 
 [[headers]]
   for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.woff2"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"

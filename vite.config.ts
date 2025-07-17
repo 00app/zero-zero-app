@@ -11,7 +11,6 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true,
     host: true,
   },
   build: {
@@ -38,9 +37,6 @@ export default defineConfig({
   },
   css: {
     postcss: './postcss.config.js',
-  },
-  define: {
-    'process.env': {},
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'lucide-react', 'sonner', '@supabase/supabase-js'],

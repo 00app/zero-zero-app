@@ -9,7 +9,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "prebuild": "npm run clean"
+    "prebuild": "npm run clean",
+    "lint": "tsc --noEmit",
+    "verify": "node verify-build.js",
+    "deploy-ready": "npm run verify && echo 'Ready for deployment!'",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
     "react": "^18.2.0",
