@@ -58,7 +58,7 @@ export function GoalsStep({ data, onNext, onBack }: GoalsStepProps) {
       </div>
       
       <div className="space-y-8">
-        <div className="zz-pill-container max-h-[400px] overflow-y-auto">
+        <div className="zz-pill-container max-h-[400px] overflow-y-auto py-2.5">
           {availableGoals.map((goal) => (
             <button
               key={goal}
