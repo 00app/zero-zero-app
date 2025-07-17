@@ -15,10 +15,12 @@ export default defineConfig({
     minify: 'esbuild',
     target: 'es2020',
     rollupOptions: {
+      external: ['next-themes'], // Externalize next-themes during build
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
           supabase: ['@supabase/supabase-js'],
+          themes: ['next-themes'],
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',

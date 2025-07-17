@@ -7,6 +7,7 @@ A brutalist/minimal sustainability app that helps users save money, reduce their
 - **Cinematic Intro**: Glitch effects and RSVP-style animations
 - **7-Step Onboarding**: Collect user data for personalized insights
 - **Interactive Dashboard**: Expandable task cards with carbon footprint calculations
+- **Water Quality Data**: Live environmental monitoring from US Water Quality Portal API
 - **AI Chat Integration**: Personalized tips through Zai chat
 - **Dark/Light Mode**: Theme-aware design system
 - **Responsive Design**: Mobile-first approach (375x812 baseline)
@@ -15,6 +16,7 @@ A brutalist/minimal sustainability app that helps users save money, reduce their
 
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS v4 + Custom CSS Variables
+- **Theming**: Next Themes for dark/light mode
 - **Backend**: Supabase (Database + Edge Functions)
 - **Deployment**: Static hosting compatible (Netlify, Vercel, etc.)
 
@@ -53,6 +55,7 @@ Create a `.env` file with:
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_OPENAI_API_KEY=your_openai_api_key
+VITE_WATER_API_URL=https://www.waterqualitydata.us/data/Result/search
 ```
 
 ## Deployment
