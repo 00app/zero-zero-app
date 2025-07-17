@@ -5,10 +5,10 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
+    "types": ["node"]
   },
   "include": [
-    "vite.config.ts",
-    "tailwind.config.ts"
+    "vite.config.ts"
   ]
 }

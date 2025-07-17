@@ -1,67 +1,130 @@
 # Zero Zero - Sustainability App
 
-A brutalist/minimal design sustainability app that helps users save money, reduce their carbon footprint, and improve well-being.
+A brutalist/minimal sustainability app that helps users save money, reduce their carbon footprint, and improve well-being through real-time data and AI-powered insights.
 
 ## Features
 
-- **Cinematic Intro**: Glitch effects and RSVP-style word animation
-- **7-Step Onboarding**: Collect user data with elegant circular navigation
-- **Interactive Dashboard**: Expandable task cards with animal comparisons
-- **AI Chat Integration**: Zai assistant for sustainability guidance
-- **Dark/Light Mode**: Theme toggle positioned top-right
-- **Supabase Backend**: Full data persistence and user management
+- **Cinematic Intro**: Glitch effects and RSVP-style animations
+- **7-Step Onboarding**: Collect user data for personalized insights
+- **Interactive Dashboard**: Expandable task cards with carbon footprint calculations
+- **AI Chat Integration**: Personalized tips through Zai chat
+- **Dark/Light Mode**: Theme-aware design system
+- **Responsive Design**: Mobile-first approach (375x812 baseline)
 
-## Design System
+## Technology Stack
 
-- **Colors**: Black (#000), White (#FFF), Grey (#242424), Accent (#1E00FF/#FF0095)
-- **Typography**: Roboto Light/Regular with specific hierarchy
-- **Interactions**: Brutalist aesthetic with 20-40px border radius
-- **Mobile-First**: Responsive design (375x812 baseline)
-
-## Tech Stack
-
-- **Frontend**: React + TypeScript + Vite
+- **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS v4 + Custom CSS Variables
-- **Backend**: Supabase (Database, Auth, Edge Functions)
-- **AI**: OpenAI GPT-4 integration
-- **Deployment**: Vercel
+- **Backend**: Supabase (Database + Edge Functions)
+- **Deployment**: Static hosting compatible (Netlify, Vercel, etc.)
 
-## Environment Variables
+## Quick Start
 
-Set up the following environment variables in Vercel:
-
-```bash
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key  
-VITE_SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-VITE_OPENAI_API_KEY=your_openai_api_key
-VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-```
-
-## Development
+### Development
 
 ```bash
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev
+
+# Open http://localhost:3000
 ```
 
-## Testing
+### Build & Deploy
 
-Access test users via URL parameters:
-- `?dev=london` - Alex (London apartment)
-- `?dev=lisbon` - Maria (Lisbon house)
-- `?dev=accra` - Kwame (Accra shared)
-- `?dev=watford` - Jamie (Watford house)
+```bash
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Type checking only (optional)
+npm run type-check
+```
+
+### Environment Variables
+
+Create a `.env` file with:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_OPENAI_API_KEY=your_openai_api_key
+```
 
 ## Deployment
 
-1. Connect repository to Vercel
-2. Set environment variables
-3. Deploy with automatic builds on push
+### Netlify
 
-## Architecture
+1. Connect your repository
+2. Build command: `npm run build`
+3. Publish directory: `dist`
+4. Add environment variables in Netlify dashboard
 
-- **Three-tier**: Frontend → Server → Database
-- **Supabase Edge Functions**: Hono web server at `/supabase/functions/server/`
-- **KV Store**: Simple key-value database for user data
-- **Real-time**: WebSocket connections for live updates
+### Vercel
+
+1. Import repository
+2. Framework preset: Vite
+3. Build command: `npm run build`
+4. Output directory: `dist`
+5. Add environment variables in Vercel dashboard
+
+### Other Static Hosts
+
+- Build output: `dist/` folder
+- Build command: `npm run build`
+- Requires SPA redirect: all routes → `/index.html`
+
+## Test Data
+
+Access different user scenarios via URL parameters:
+
+- `?dev=london` - London user with apartment
+- `?dev=lisbon` - Lisbon user with house
+- `?dev=accra` - Accra user with shared housing
+- `?dev=watford` - Watford user with family house
+
+## Design System
+
+### Colors
+- **Dark**: `#000000` (bg), `#ffffff` (text), `#1E00FF` (accent)
+- **Light**: `#ffffff` (bg), `#000000` (text), `#FF0095` (accent)
+
+### Typography
+- **Font**: Roboto (Light 300, Regular 400, Medium 500)
+- **Hierarchy**: h1: 80px, h2: 60px, h3: 40px, p1: 18px
+- **Style**: All lowercase text
+
+### Spacing
+- **Screen**: 24px padding
+- **Module**: 48px spacing
+- **Card**: 32px inner padding
+
+## Project Structure
+
+```
+├── App.tsx                 # Main app component
+├── components/
+│   ├── dashboard/          # Dashboard components
+│   ├── onboarding/         # 7-step onboarding flow
+│   └── ui/                 # Reusable UI components
+├── services/               # API services & calculations
+├── utils/                  # Utilities (Supabase, etc.)
+├── styles/                 # Global CSS with design system
+└── supabase/              # Backend functions
+```
+
+## Contributing
+
+1. Follow the brutalist design principles
+2. Use existing CSS classes (`.zz-*`)
+3. Maintain mobile-first responsive design
+4. Test with different user scenarios
+5. Ensure accessibility compliance
+
+## License
+
+All rights reserved - Zero Zero Sustainability App

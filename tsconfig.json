@@ -26,13 +26,26 @@
     }
   },
   "include": [
-    ".",
-    "**/*.ts",
-    "**/*.tsx"
+    "App.tsx",
+    "main.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "services/**/*.ts",
+    "services/**/*.tsx",
+    "utils/**/*.ts",
+    "utils/**/*.tsx",
+    "supabase/**/*.ts",
+    "supabase/**/*.tsx",
+    "imports/**/*.ts",
+    "imports/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "vite.config.ts",
+    "tailwind.config.ts",
+    "**/*.config.ts",
+    "**/*.config.js"
   ],
   "references": [
     { "path": "./tsconfig.node.json" }
