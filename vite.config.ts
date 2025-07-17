@@ -7,6 +7,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
+      '@/components': path.resolve(__dirname, './components'),
+      '@/utils': path.resolve(__dirname, './utils'),
+      '@/services': path.resolve(__dirname, './services'),
     },
   },
   server: {
@@ -18,6 +21,7 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: false,
     minify: 'terser',
+    target: 'es2020',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -25,6 +29,7 @@ export default defineConfig({
           ui: ['lucide-react', 'sonner'],
           supabase: ['@supabase/supabase-js'],
           animation: ['framer-motion'],
+          radix: ['@radix-ui/react-dialog', '@radix-ui/react-label', '@radix-ui/react-progress', '@radix-ui/react-radio-group', '@radix-ui/react-slider'],
         },
       },
     },
@@ -39,6 +44,18 @@ export default defineConfig({
     postcss: './postcss.config.js',
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'lucide-react', 'sonner', '@supabase/supabase-js'],
+    include: [
+      'react', 
+      'react-dom', 
+      'lucide-react', 
+      'sonner', 
+      '@supabase/supabase-js',
+      'framer-motion',
+      'react-hook-form',
+      'zod'
+    ],
+  },
+  esbuild: {
+    target: 'es2020',
   },
 })

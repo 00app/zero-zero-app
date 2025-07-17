@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
-import { OnboardingFlow, OnboardingData } from './components/onboarding/OnboardingFlow';
+import { OnboardingFlow, type OnboardingData } from './components/onboarding/OnboardingFlow';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { GlitchIntro } from './components/GlitchIntro';
 import { RSVPAnimation } from './components/RSVPAnimation';
 import { CTAButton } from './components/CTAButton';
 import { Toaster } from './components/ui/sonner';
 
-function IntroScreen({ onComplete, isDark }: { onComplete: () => void; isDark: boolean }) {
+interface IntroScreenProps {
+  onComplete: () => void;
+  isDark: boolean;
+}
+
+function IntroScreen({ onComplete, isDark }: IntroScreenProps) {
   const [currentPhase, setCurrentPhase] = useState<'glitch' | 'rsvp' | 'cta'>('glitch');
   const [isExiting, setIsExiting] = useState(false);
 
@@ -24,16 +29,19 @@ function IntroScreen({ onComplete, isDark }: { onComplete: () => void; isDark: b
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center transition-all duration-1000 ease-out ${
-      isExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
-    }`} style={{ background: 'var(--zz-bg)', color: 'var(--zz-text)' }}>
+    <div 
+      className={`min-h-screen flex items-center justify-center transition-all duration-1000 ease-out ${
+        isExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+      }`} 
+      style={{ background: 'var(--zz-bg)', color: 'var(--zz-text)' }}
+    >
       {currentPhase === 'glitch' && (
         <GlitchIntro onComplete={handleGlitchComplete} />
       )}
       
       {currentPhase === 'rsvp' && (
         <RSVPAnimation
-          text="WHAT IF CHANGE STARTED WITH JUST ONE SMALL THING?"
+          text="what if change started with just one small thing?"
           onComplete={handleRSVPComplete}
         />
       )}
@@ -62,12 +70,13 @@ export default function App() {
     const savedData = localStorage.getItem('zz-user-data');
     if (savedData) {
       try {
-        const parsedData = JSON.parse(savedData);
+        const parsedData = JSON.parse(savedData) as OnboardingData;
         if (parsedData.name && parsedData.postcode) {
           setUserData(parsedData);
           setCurrentScreen('dashboard');
         }
       } catch (error) {
+        console.error('Error parsing saved user data:', error);
         localStorage.removeItem('zz-user-data');
       }
     }
@@ -108,15 +117,18 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col transition-all duration-400 ease-out ${
-      isTransitioning ? 'opacity-70 scale-99' : 'opacity-100 scale-100'
-    } ${!isDark ? 'light' : 'dark'}`} style={{ background: 'var(--zz-bg)', color: 'var(--zz-text)' }}>
+    <div 
+      className={`min-h-screen flex flex-col transition-all duration-300 ease-out ${
+        isTransitioning ? 'opacity-70 scale-99' : 'opacity-100 scale-100'
+      } ${!isDark ? 'light' : 'dark'}`} 
+      style={{ background: 'var(--zz-bg)', color: 'var(--zz-text)' }}
+    >
       
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
         <button 
           onClick={toggleTheme}
           className="zz-p1 opacity-50 hover:opacity-100 transition-all duration-300"
-          aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
+          aria-label={`switch to ${isDark ? 'light' : 'dark'} theme`}
         >
           {isDark ? '○' : '●'}
         </button>

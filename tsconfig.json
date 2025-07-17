@@ -15,9 +15,15 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/services/*": ["./services/*"]
     }
   },
   "include": [
@@ -28,13 +34,18 @@
     "utils/**/*.tsx",
     "utils/**/*.ts",
     "services/**/*.ts",
-    "data/**/*.json"
+    "data/**/*.json",
+    "imports/**/*.tsx",
+    "imports/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "vite.config.ts",
-    "tsconfig.node.json"
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "src",
+    "supabase/functions",
+    "public",
+    "verify-build.js",
+    "postcss.config.js",
+    "tailwind.config.js"
+  ]
 }
