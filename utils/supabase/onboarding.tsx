@@ -1,4 +1,5 @@
 import { projectId, publicAnonKey } from './info';
+import { isSupabaseConfigured } from './client';
 
 export interface OnboardingData {
   name: string;
@@ -24,6 +25,12 @@ export interface OnboardingRecord {
  */
 export const saveOnboardingData = async (data: OnboardingData): Promise<string | null> => {
   try {
+    // Check if Supabase is configured before trying to save
+    if (!isSupabaseConfigured()) {
+      console.log('ℹ️ Supabase not configured - skipping data save (demo mode)');
+      return null;
+    }
+    
     const sessionId = `onboarding_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-eebb7b0c/onboarding`, {
@@ -44,11 +51,11 @@ export const saveOnboardingData = async (data: OnboardingData): Promise<string |
     }
 
     const result = await response.json();
-    console.log('Onboarding data saved successfully:', result);
+    console.log('✅ Onboarding data saved successfully:', result);
     
     return sessionId;
   } catch (error) {
-    console.error('Failed to save onboarding data:', error);
+    console.warn('⚠️ Failed to save onboarding data:', error);
     return null;
   }
 };
@@ -58,6 +65,12 @@ export const saveOnboardingData = async (data: OnboardingData): Promise<string |
  */
 export const getOnboardingData = async (sessionId: string): Promise<OnboardingRecord | null> => {
   try {
+    // Check if Supabase is configured before trying to fetch
+    if (!isSupabaseConfigured()) {
+      console.log('ℹ️ Supabase not configured - cannot retrieve data (demo mode)');
+      return null;
+    }
+    
     const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-eebb7b0c/onboarding/${sessionId}`, {
       method: 'GET',
       headers: {
@@ -75,7 +88,7 @@ export const getOnboardingData = async (sessionId: string): Promise<OnboardingRe
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error('Failed to retrieve onboarding data:', error);
+    console.warn('⚠️ Failed to retrieve onboarding data:', error);
     return null;
   }
 };

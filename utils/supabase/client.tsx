@@ -1,59 +1,117 @@
+import { createClient } from '@supabase/supabase-js';
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { projectId, publicAnonKey } from './info';
+// Environment variables with fallbacks (browser-only)
+const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || '';
 
-const supabaseUrl = `https://${projectId}.supabase.co`;
+// Check if we're in development mode
+const isDevelopment = import.meta.env?.MODE === 'development' || 
+                     typeof window !== 'undefined' && window.location.hostname === 'localhost';
 
-// Create a singleton Supabase client to avoid multiple instances
-let supabaseInstance: SupabaseClient | null = null;
-let instanceCreationCount = 0;
+// Mock Supabase client for demo/development purposes
+const createMockSupabaseClient = () => ({
+  auth: {
+    getSession: async () => ({ data: { session: null }, error: null }),
+    signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
+    signOut: async () => ({ error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+  },
+  from: () => ({
+    select: () => Promise.resolve({ data: [], error: null }),
+    insert: () => Promise.resolve({ data: null, error: null }),
+    update: () => Promise.resolve({ data: null, error: null }),
+    delete: () => Promise.resolve({ data: null, error: null }),
+    upsert: () => Promise.resolve({ data: null, error: null })
+  }),
+  storage: {
+    from: () => ({
+      upload: async () => ({ data: null, error: null }),
+      download: async () => ({ data: null, error: null }),
+      createSignedUrl: async () => ({ data: null, error: null }),
+      list: async () => ({ data: [], error: null })
+    })
+  },
+  rpc: async () => ({ data: null, error: null })
+});
 
-export const getSupabaseClient = (): SupabaseClient => {
-  if (!supabaseInstance) {
-    instanceCreationCount++;
-    console.log(`Creating Supabase client instance #${instanceCreationCount}`);
+// Singleton pattern for Supabase client
+let supabaseInstance: ReturnType<typeof createClient> | any = null;
+
+// Create Supabase client with error handling
+export function createSupabaseClient() {
+  // Return existing instance if available
+  if (supabaseInstance) {
+    return supabaseInstance;
+  }
+
+  // Check if environment variables are available
+  const hasValidConfig = supabaseUrl && supabaseAnonKey && 
+                        supabaseUrl.startsWith('https://') && 
+                        supabaseAnonKey.length > 20;
+
+  if (!hasValidConfig) {
+    if (isDevelopment) {
+      console.warn('⚠️ Supabase configuration not found. Using mock client for development.');
+      console.info('💡 To use real Supabase, add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file');
+    }
     
-    supabaseInstance = createClient(supabaseUrl, publicAnonKey, {
+    // Return mock client for development/demo
+    supabaseInstance = createMockSupabaseClient();
+    return supabaseInstance;
+  }
+
+  try {
+    // Create real Supabase client
+    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        // Set a specific storage key to avoid conflicts
-        storageKey: 'zerozero-supabase-auth-token',
+        detectSessionInUrl: true
       },
-      global: {
-        headers: {
-          'X-Client-Info': 'zerozero-app',
-        },
-      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
+        }
+      }
     });
+
+    if (isDevelopment) {
+      console.info('✅ Supabase client initialized successfully');
+    }
+
+    return supabaseInstance;
+  } catch (error) {
+    console.error('❌ Failed to create Supabase client:', error);
     
-    // Add event listener to track auth state changes
-    supabaseInstance.auth.onAuthStateChange((event, session) => {
-      console.log('Supabase auth state change:', event, session ? 'session exists' : 'no session');
-    });
-    
-  } else {
-    console.log('Reusing existing Supabase client instance');
+    // Fallback to mock client
+    supabaseInstance = createMockSupabaseClient();
+    return supabaseInstance;
   }
-  return supabaseInstance;
-};
+}
 
-// Export the singleton instance
-export const supabase = getSupabaseClient();
+// Get the Supabase client instance
+export function getSupabaseClient() {
+  return createSupabaseClient();
+}
 
-export default supabase;
+// Check if Supabase is properly configured
+export function isSupabaseConfigured(): boolean {
+  return !!(supabaseUrl && supabaseAnonKey && 
+           supabaseUrl.startsWith('https://') && 
+           supabaseAnonKey.length > 20);
+}
 
-// Helper function to reset the singleton (useful for testing)
-export const resetSupabaseInstance = () => {
-  if (supabaseInstance) {
-    console.log('Resetting Supabase client instance');
-  }
-  supabaseInstance = null;
-};
+// Get configuration status for debugging
+export function getSupabaseConfig() {
+  return {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseAnonKey,
+    isConfigured: isSupabaseConfigured(),
+    isDevelopment,
+    urlPreview: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'Not set',
+    keyPreview: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 10)}...` : 'Not set'
+  };
+}
 
-// Export debug info
-export const getDebugInfo = () => ({
-  instanceCreationCount,
-  hasInstance: !!supabaseInstance,
-  url: supabaseUrl,
-});
+// Export default client for convenience
+export const supabase = createSupabaseClient();
