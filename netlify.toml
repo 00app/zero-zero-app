@@ -1,9 +1,10 @@
 [build]
-  publish = "dist"
   command = "npm run build"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18"
+  NPM_VERSION = "8"
 
 [[redirects]]
   from = "/*"
@@ -13,19 +14,26 @@
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    cache-control = "max-age=31536000"
+    cache-control = "max-age=31536000, immutable"
 
 [[headers]]
-  for = "*.js"
+  for = "/*.js"
   [headers.values]
-    cache-control = "max-age=31536000"
+    cache-control = "max-age=31536000, immutable"
 
 [[headers]]
-  for = "*.css"
+  for = "/*.css"
   [headers.values]
-    cache-control = "max-age=31536000"
+    cache-control = "max-age=31536000, immutable"
 
 [[headers]]
   for = "/index.html"
   [headers.values]
-    cache-control = "max-age=0"
+    cache-control = "no-cache"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[functions]
+  node_bundler = "esbuild"

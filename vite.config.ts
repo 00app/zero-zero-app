@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
   resolve: {
     alias: {
@@ -27,7 +27,7 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
       },
     },
-    assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.webp'],
+    assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.webp', '**/*.json'],
   },
   server: {
     port: 3000,
@@ -38,9 +38,9 @@ export default defineConfig({
     host: true,
   },
   define: {
-    'import.meta.env.MODE': JSON.stringify(process.env.NODE_ENV || 'development'),
+    'import.meta.env.MODE': JSON.stringify(mode),
   },
   esbuild: {
     logOverride: { 'this-is-undefined-in-esm': 'silent' }
   }
-})
+}))
