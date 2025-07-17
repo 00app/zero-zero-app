@@ -6,6 +6,7 @@ interface ZaiChatModalProps {
   userData: OnboardingData;
   isOpen: boolean;
   onClose: () => void;
+  initialMessage?: string;
 }
 
 interface Message {
@@ -15,7 +16,7 @@ interface Message {
   timestamp: Date;
 }
 
-export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
+export function ZaiChatModal({ userData, isOpen, onClose, initialMessage }: ZaiChatModalProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -25,25 +26,25 @@ export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      // Welcome message when chat opens
-      const welcomeMessage: Message = {
-        id: '1',
-        content: `hello ${userData.name}! i'm zai, your sustainability assistant. i can help you understand your carbon footprint, find local eco-friendly options, or answer questions about sustainable living. what would you like to know?`,
-        sender: 'zai',
-        timestamp: new Date()
-      };
-      setMessages([welcomeMessage]);
-    }
-  }, [isOpen, userData.name, messages.length]);
-
   const generateZaiResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
+    
+    // Enhanced responses for money tips
+    if (message.includes('renewable energy') || message.includes('energy supplier')) {
+      return `excellent choice! switching to renewable energy can save £${userData.monthlySpend > 2500 ? '120-200' : '80-120'} annually. for your ${userData.homeType} in ${userData.postcode}, i recommend checking octopus energy, bulb, or ecotricity. they often have special deals for new customers. would you like me to help you compare tariffs or find local green energy options?`;
+    }
+    
+    if (message.includes('meal planning') || message.includes('food waste')) {
+      return `smart thinking! ai meal planning can save £300+ per year for households like yours. based on your ${userData.people} person household, try apps like plannto or olio for meal planning and food sharing. you can also batch cook on sundays and use your freezer strategically. want specific meal planning tips for your budget and dietary goals?`;
+    }
+    
+    if (message.includes('preloved') || message.includes('second hand')) {
+      return `preloved shopping is brilliant for your wallet and the planet! for someone spending £${userData.monthlySpend}/month, you could save £250+ yearly. check vinted for clothes, facebook marketplace for furniture, and cex for tech. in ${userData.postcode} area, there might be local vintage shops too. shall i help you find the best preloved options near you?`;
+    }
+    
+    if (message.includes('transport') || message.includes('cycle') || message.includes('walk')) {
+      return `transport changes make huge impact! your current ${userData.transport} setup could be optimized. walking/cycling short trips saves £200+ annually on fuel/tickets. for your area (${userData.postcode}), check citymapper for route planning and local cycle-to-work schemes. interested in calculating your potential transport savings?`;
+    }
     
     // Simple keyword-based responses - in a real app this would use AI
     if (message.includes('carbon') || message.includes('footprint')) {
@@ -69,6 +70,47 @@ export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
     // Default response
     return `that's a great question about sustainable living. while i'm still learning, i can help you with carbon footprint insights, money-saving tips, local eco options, and goal tracking. could you ask me something more specific about these areas?`;
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      // Welcome message when chat opens
+      const welcomeMessage: Message = {
+        id: '1',
+        content: `hello ${userData.name}! i'm zai, your sustainability assistant. i can help you understand your carbon footprint, find local eco-friendly options, or answer questions about sustainable living. what would you like to know?`,
+        sender: 'zai',
+        timestamp: new Date()
+      };
+      setMessages([welcomeMessage]);
+      
+      // If there's an initial message, send it automatically
+      if (initialMessage) {
+        setTimeout(() => {
+          const userMessage: Message = {
+            id: Date.now().toString(),
+            content: initialMessage,
+            sender: 'user',
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, userMessage]);
+          
+          // Generate response to initial message
+          setTimeout(() => {
+            const zaiResponse: Message = {
+              id: (Date.now() + 1).toString(),
+              content: generateZaiResponse(initialMessage),
+              sender: 'zai',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, zaiResponse]);
+          }, 1000);
+        }, 500);
+      }
+    }
+  }, [isOpen, userData.name, messages.length, initialMessage]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -98,7 +140,7 @@ export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
     }, 1500);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -139,8 +181,8 @@ export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
                 <span className="text-sm">○</span>
               </div>
               <div>
-                <h3 className="zz-h3">zai</h3>
-                <p className="zz-p1 opacity-60 text-sm">sustainability assistant</p>
+                <h3 className="zz-large">zai</h3>
+                <p className="zz-small opacity-60">sustainability assistant</p>
               </div>
             </div>
             <button 
@@ -175,8 +217,8 @@ export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
                     : `1px solid var(--zz-border)`
                 }}
               >
-                <p className="zz-p1">{message.content}</p>
-                <p className="text-xs mt-2 opacity-60">
+                <p className="zz-medium">{message.content}</p>
+                <p className="zz-small mt-2 opacity-60">
                   {message.timestamp.toLocaleTimeString([], { 
                     hour: '2-digit', 
                     minute: '2-digit' 
@@ -195,7 +237,7 @@ export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
                   border: `1px solid var(--zz-border)`
                 }}
               >
-                <p className="zz-p1 opacity-60">zai is typing...</p>
+                <p className="zz-medium opacity-60">zai is typing...</p>
               </div>
             </div>
           )}
@@ -212,7 +254,7 @@ export function ZaiChatModal({ userData, isOpen, onClose }: ZaiChatModalProps) {
             <textarea
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               placeholder="ask zai anything about sustainability..."
               className="flex-1 zz-chat-input resize-none h-12"
               style={{

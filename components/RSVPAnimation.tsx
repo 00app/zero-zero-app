@@ -11,8 +11,8 @@ export function RSVPAnimation({ text, onComplete }: RSVPAnimationProps) {
   const [isWordVisible, setIsWordVisible] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
-  // Split text into individual words
-  const words = text.split(' ');
+  // Split text into individual words and convert to lowercase
+  const words = text.toLowerCase().split(' ');
 
   useEffect(() => {
     if (currentWordIndex >= words.length) {

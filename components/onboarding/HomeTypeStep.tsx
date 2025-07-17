@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { OnboardingData } from './OnboardingFlow';
 
@@ -20,7 +19,7 @@ export function HomeTypeStep({ data, onNext, onBack }: HomeTypeStepProps) {
   };
 
   const options: { value: OnboardingData['homeType']; label: string }[] = [
-    { value: 'apartment', label: 'apartment' },
+    { value: 'flat', label: 'flat' },
     { value: 'house', label: 'house' },
     { value: 'shared', label: 'shared house' },
   ];
@@ -36,9 +35,6 @@ export function HomeTypeStep({ data, onNext, onBack }: HomeTypeStepProps) {
         
         <div className="space-y-4">
           <h1 className="zz-h1">what type of home?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            this helps us estimate your energy usage and carbon footprint
-          </p>
         </div>
       </div>
       
@@ -59,7 +55,7 @@ export function HomeTypeStep({ data, onNext, onBack }: HomeTypeStepProps) {
         
         <div className="flex items-center justify-between">
           <div className="opacity-60">
-            <p className="zz-p1">
+            <p className="zz-medium">
               {homeType && `home type: ${homeType}`}
             </p>
           </div>

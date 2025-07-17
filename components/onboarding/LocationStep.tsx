@@ -36,9 +36,6 @@ export function LocationStep({ data, onNext, onBack }: LocationStepProps) {
         
         <div className="space-y-4">
           <h1 className="zz-h1">what's your postcode?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            we use this for local sustainability data and personalized recommendations
-          </p>
         </div>
       </div>
       

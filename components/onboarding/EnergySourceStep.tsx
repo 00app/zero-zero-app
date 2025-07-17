@@ -36,9 +36,6 @@ export function EnergySourceStep({ data, onNext, onBack }: EnergySourceStepProps
         
         <div className="space-y-4">
           <h1 className="zz-h1">energy source?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            helps us calculate your home's carbon impact more accurately
-          </p>
         </div>
       </div>
       

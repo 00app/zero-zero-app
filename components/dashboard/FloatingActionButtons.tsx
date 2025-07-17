@@ -3,7 +3,7 @@ import React from 'react';
 
 interface FloatingActionButtonsProps {
   onReset: () => void;
-  onZaiChat: () => void;
+  onZaiChat: (message?: string) => void;
   onSettings: () => void;
 }
 
@@ -24,7 +24,7 @@ export function FloatingActionButtons({ onReset, onZaiChat, onSettings }: Floati
           
           {/* Zai Chat Button - Center */}
           <button 
-            onClick={onZaiChat}
+            onClick={() => onZaiChat()}
             className="zz-action-button zz-action-button-primary pointer-events-auto"
             title="Ask Zai"
           >

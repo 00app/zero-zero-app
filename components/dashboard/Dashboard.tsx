@@ -6,7 +6,7 @@ import { FloatingActionButtons } from './FloatingActionButtons';
 import { Settings } from './Settings';
 import { ZaiChatModal } from './ZaiChatModal';
 import { TaskCardsSection } from './TaskCardsSection';
-import { WaterQualityCard } from './WaterQualityCard';
+
 
 interface DashboardProps {
   userData: OnboardingData;
@@ -32,6 +32,7 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
   const [isLoading, setIsLoading] = useState(true);
   const [currentView, setCurrentView] = useState<'dashboard' | 'settings'>('dashboard');
   const [isZaiChatOpen, setIsZaiChatOpen] = useState(false);
+  const [zaiInitialMessage, setZaiInitialMessage] = useState<string | undefined>(undefined);
 
   const footprint = calculateCarbonFootprint(userData);
 
@@ -134,7 +135,8 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
     setCurrentView('settings');
   };
 
-  const handleZaiChat = () => {
+  const handleZaiChat = (message?: string) => {
+    setZaiInitialMessage(message || undefined);
     setIsZaiChatOpen(true);
   };
 
@@ -181,7 +183,7 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
       <div className="min-h-screen flex items-center justify-center transition-all duration-500">
         <div className="text-center space-y-4">
           <div className="zz-fade-in">
-            <h2 className="zz-h2">calculating your impact</h2>
+            <h2 className="zz-large">calculating your impact</h2>
           </div>
           <div className="zz-fade-in" style={{ animationDelay: '0.3s' }}>
             <div className="w-48 h-1 bg-current opacity-20 mx-auto">
@@ -197,15 +199,15 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
     <div className="min-h-screen transition-all duration-500">
       
       {/* Header - Clean floating text without background */}
-      <div className="sticky top-0 z-20">
+      <div>
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="zz-h1">hello {userData.name}</h1>
-              <p className="zz-p1 opacity-60 mt-2">your sustainability dashboard</p>
+              <h1 className="zz-large">hello {userData.name}</h1>
+              <p className="zz-medium opacity-60 mt-2">your sustainability dashboard</p>
             </div>
             <div className="text-right">
-              <div className="zz-p1 opacity-60">
+              <div className="zz-medium opacity-60">
                 {new Date().toLocaleDateString('en-GB', { 
                   weekday: 'long', 
                   day: 'numeric',
@@ -222,20 +224,15 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
         
         {/* Task Cards Section */}
         <div className="mb-16">
-          <TaskCardsSection userData={userData} />
+          <TaskCardsSection userData={userData} isDark={isDark} />
         </div>
 
-        {/* Water Quality Section */}
-        <div className="mb-16">
-          <h2 className="zz-h2 mb-4">water quality insights</h2>
-          <p className="zz-p1 opacity-60 mb-8">real-time environmental data from your region</p>
-          <WaterQualityCard userData={userData} isDark={isDark} />
-        </div>
+
 
         {/* Overview Cards Grid */}
         <div className="mb-8">
-          <h2 className="zz-h2 mb-4">your impact overview</h2>
-          <p className="zz-p1 opacity-60 mb-8">detailed metrics and insights</p>
+          <h2 className="zz-large mb-4">your impact overview</h2>
+          <p className="zz-medium opacity-60 mb-8">detailed metrics and insights</p>
         </div>
 
         <div className="zz-card-grid">
@@ -252,9 +249,9 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
-                  <h3 className="zz-h3">{card.title}</h3>
+                  <h3 className="zz-large">{card.title}</h3>
                   {card.trend && (
-                    <span className={`text-sm ${
+                    <span className={`zz-small ${
                       card.trend === 'down' ? 'opacity-60' : 
                       card.trend === 'up' ? 'opacity-80' : 'opacity-50'
                     }`}>
@@ -264,13 +261,13 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
                 </div>
                 
                 <div className="space-y-2">
-                  <h2 className="zz-h2">{card.value}</h2>
-                  <p className="zz-p1 opacity-70">{card.description}</p>
+                  <h2 className="zz-large">{card.value}</h2>
+                  <p className="zz-medium opacity-70">{card.description}</p>
                 </div>
                 
                 {card.action && (
                   <div className="pt-2">
-                    <button className="zz-p1 opacity-60 hover:opacity-100">
+                    <button className="zz-medium opacity-60 hover:opacity-100">
                       {card.action} →
                     </button>
                   </div>
@@ -292,7 +289,11 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
       <ZaiChatModal
         userData={userData}
         isOpen={isZaiChatOpen}
-        onClose={() => setIsZaiChatOpen(false)}
+        onClose={() => {
+          setIsZaiChatOpen(false);
+          setZaiInitialMessage(undefined);
+        }}
+        initialMessage={zaiInitialMessage}
       />
     </div>
   );

@@ -58,9 +58,6 @@ export function TransportStep({ data, onNext, onBack }: TransportStepProps) {
           
           <div className="space-y-4">
             <h1 className="zz-h1">what type of car?</h1>
-            <p className="zz-p1 opacity-70 max-w-2xl">
-              different engines have different carbon impacts
-            </p>
           </div>
         </div>
         
@@ -112,9 +109,6 @@ export function TransportStep({ data, onNext, onBack }: TransportStepProps) {
         
         <div className="space-y-4">
           <h1 className="zz-h1">how do you travel?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            transport is a major factor in your carbon footprint
-          </p>
         </div>
       </div>
       

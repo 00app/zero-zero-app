@@ -16,7 +16,7 @@ export function CTAButton({ onBegin }: CTAButtonProps) {
             animationDelay: '0.3s' // Slight delay for smooth entrance
           }}
         >
-          start
+          begin
         </button>
       </div>
     </div>

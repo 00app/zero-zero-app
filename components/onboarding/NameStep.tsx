@@ -45,9 +45,6 @@ export function NameStep({ data, onNext, onBack, isDark }: NameStepProps) {
         
         <div className="space-y-4">
           <h1 className="zz-h1">what's your name?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            we'll use this to personalize your experience and celebrate your sustainability wins
-          </p>
         </div>
       </div>
       

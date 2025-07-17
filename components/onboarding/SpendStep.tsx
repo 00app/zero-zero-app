@@ -32,16 +32,13 @@ export function SpendStep({ data, onNext, onBack }: SpendStepProps) {
         
         <div className="space-y-4">
           <h1 className="zz-h1">monthly spending?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            helps us calculate potential savings and suggest money-saving opportunities
-          </p>
         </div>
       </div>
       
       <div className="space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="zz-h2">£{monthlySpend.toLocaleString()}</h2>
-          <p className="zz-p1 opacity-60">per month</p>
+          <h2 className="zz-h2 text-left">£{monthlySpend.toLocaleString()}</h2>
+          <p className="zz-p1 opacity-60 text-left">per month</p>
         </div>
 
         <div className="space-y-4">
@@ -52,9 +49,11 @@ export function SpendStep({ data, onNext, onBack }: SpendStepProps) {
             step="100"
             value={monthlySpend}
             onChange={handleSliderChange}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+            className="w-full h-2 appearance-none cursor-pointer"
             style={{
-              background: `linear-gradient(to right, var(--zz-accent) 0%, var(--zz-accent) ${((monthlySpend - 500) / (10000 - 500)) * 100}%, var(--zz-border) ${((monthlySpend - 500) / (10000 - 500)) * 100}%, var(--zz-border) 100%)`
+              background: `linear-gradient(to right, #ffffff 0%, #ffffff ${((monthlySpend - 500) / (10000 - 500)) * 100}%, #242424 ${((monthlySpend - 500) / (10000 - 500)) * 100}%, #242424 100%)`,
+              outline: 'none',
+              border: 'none'
             }}
           />
           

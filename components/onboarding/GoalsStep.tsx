@@ -51,9 +51,6 @@ export function GoalsStep({ data, onNext, onBack }: GoalsStepProps) {
         
         <div className="space-y-4">
           <h1 className="zz-h1">what are your goals?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            select multiple goals to personalize your sustainability journey
-          </p>
         </div>
       </div>
       

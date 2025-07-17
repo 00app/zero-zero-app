@@ -115,11 +115,11 @@ export function ExpandableTaskCard({
             <div className="flex items-center space-x-3">
               {/* Simple monochrome icon */}
               <div className="w-8 h-8 flex items-center justify-center">
-                <span className="text-2xl font-light" style={{ fontFamily: 'Roboto Light' }}>
+                <span className="zz-medium">
                   {cardData.icon}
                 </span>
               </div>
-              <h3 className="zz-h3 font-light">{cardData.title}</h3>
+              <h3 className="zz-large">{cardData.title}</h3>
             </div>
             <span className={`text-lg transition-transform duration-200 ${
               isActive ? 'rotate-180' : 'rotate-0'
@@ -130,20 +130,20 @@ export function ExpandableTaskCard({
 
           <div className="space-y-3">
             <div className="flex items-baseline space-x-2">
-              <span className="zz-h2 font-light">{cardData.stat}</span>
-              <span className="zz-p1 opacity-60">{cardData.unit}</span>
+              <span className="zz-large">{cardData.stat}</span>
+              <span className="zz-medium opacity-60">{cardData.unit}</span>
             </div>
             
             {/* Prominent animal comparison */}
-            <p className="zz-p1 opacity-80 font-medium">
-              That's like saving the weight of a {cardData.animal}!
+            <p className="zz-medium opacity-80">
+              that's like saving the weight of a {cardData.animal}!
             </p>
           </div>
 
           {isCompleted && (
             <div className="mt-4 flex items-center space-x-2 zz-task-completed">
               <span className="text-lg">✓</span>
-              <span className="zz-p1">Completed</span>
+              <span className="zz-medium">completed</span>
             </div>
           )}
         </div>
@@ -154,9 +154,9 @@ export function ExpandableTaskCard({
             
             {/* Contextual Question */}
             <div className="mb-6">
-              <h4 className="zz-p1 font-medium mb-4">{cardData.contextualQuestion}</h4>
+              <h4 className="zz-medium mb-4">{cardData.contextualQuestion}</h4>
               <div className="space-y-3">
-                {cardData.answerOptions.map((option, index) => (
+                {(cardData.answerOptions || []).map((option, index) => (
                   <button
                     key={index}
                     onClick={() => handleAnswerSelect(option)}
@@ -167,7 +167,7 @@ export function ExpandableTaskCard({
                     }`}
                     style={{ borderRadius: '12px' }}
                   >
-                    <span className="zz-p1">{option}</span>
+                    <span className="zz-medium">{option}</span>
                   </button>
                 ))}
               </div>
@@ -176,7 +176,7 @@ export function ExpandableTaskCard({
             {/* Tips Toggle */}
             <div className="mb-6">
               <div className="flex items-center justify-between py-4">
-                <span className="zz-p1">Would you like to see tips like this more often?</span>
+                <span className="zz-medium">would you like to see tips like this more often?</span>
                 <button
                   onClick={handleToggleTips}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
@@ -196,11 +196,11 @@ export function ExpandableTaskCard({
 
             {/* Impact Over Time Chart */}
             <div className="mb-6">
-              <h4 className="zz-p1 font-medium mb-4">Your Impact Over Time</h4>
+              <h4 className="zz-medium mb-4">your impact over time</h4>
               <div className="space-y-3">
-                {cardData.impactChartData.map((item, index) => (
+                {(cardData.impactChartData || []).map((item, index) => (
                   <div key={index} className="flex items-center justify-between">
-                    <span className="zz-p1 text-sm opacity-70">{item.name}</span>
+                    <span className="zz-small opacity-70">{item.name}</span>
                     <div className="flex items-center space-x-3">
                       <div 
                         className="zz-chart-bar"
@@ -210,7 +210,7 @@ export function ExpandableTaskCard({
                           borderRadius: '2px'
                         }}
                       />
-                      <span className="zz-p1 text-sm w-8 text-right">{item.value}</span>
+                      <span className="zz-small w-8 text-right">{item.value}</span>
                     </div>
                   </div>
                 ))}
@@ -226,7 +226,7 @@ export function ExpandableTaskCard({
                   isCompleted ? 'opacity-50 cursor-not-allowed' : 'hover:bg-current hover:text-bg'
                 }`}
               >
-                {isCompleted ? 'Completed' : 'Mark as Done'}
+                {isCompleted ? 'completed' : 'mark as done'}
               </button>
               
               {onPrevious && (
@@ -234,7 +234,7 @@ export function ExpandableTaskCard({
                   onClick={onPrevious}
                   className="zz-pill hover:bg-current hover:text-bg"
                 >
-                  Previous
+                  previous
                 </button>
               )}
               
@@ -243,14 +243,14 @@ export function ExpandableTaskCard({
                   onClick={onNext}
                   className="zz-pill hover:bg-current hover:text-bg"
                 >
-                  Next
+                  next
                 </button>
               )}
             </div>
 
             {/* Swipe Hint */}
             <div className="mt-4 text-center">
-              <p className="zz-p1 text-xs opacity-40">
+              <p className="zz-small opacity-40">
                 ← swipe to navigate →
               </p>
             </div>

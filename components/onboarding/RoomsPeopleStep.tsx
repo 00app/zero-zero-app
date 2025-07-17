@@ -39,9 +39,6 @@ export function RoomsPeopleStep({ data, onNext, onBack }: RoomsPeopleStepProps) 
         
         <div className="space-y-4">
           <h1 className="zz-h1">how many rooms & people?</h1>
-          <p className="zz-p1 opacity-70 max-w-2xl">
-            this helps us calculate your home's energy usage and carbon footprint per person
-          </p>
         </div>
       </div>
       

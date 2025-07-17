@@ -9,11 +9,14 @@ import { RoomsPeopleStep } from './RoomsPeopleStep';
 import { SpendStep } from './SpendStep';
 import { GoalsStep } from './GoalsStep';
 import { projectId, publicAnonKey } from '../../utils/supabase/info';
+import { isSupabaseConfigured } from '../../utils/supabase/client';
+import { toast } from "sonner@2.0.3";
+import { getLocaleFromPostcode } from '../../utils/localization';
 
 export interface OnboardingData {
   name: string;
   postcode: string;
-  homeType: 'apartment' | 'house' | 'shared';
+  homeType: 'flat' | 'house' | 'shared';
   energySource: 'grid' | 'renewable' | 'mixed';
   transport: 'car' | 'public' | 'bike' | 'walk' | 'mixed';
   carType?: 'petrol' | 'diesel' | 'hybrid' | 'electric';
@@ -51,6 +54,12 @@ export function OnboardingFlow({ onComplete, isDark }: OnboardingFlowProps) {
     try {
       setIsSaving(true);
       
+      // Check if Supabase is configured before trying to save
+      if (!isSupabaseConfigured()) {
+        console.log('ℹ️ Supabase not configured - skipping data save (demo mode)');
+        return null;
+      }
+      
       // Generate a unique ID for this user's onboarding session
       const sessionId = `onboarding_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
@@ -73,11 +82,11 @@ export function OnboardingFlow({ onComplete, isDark }: OnboardingFlowProps) {
       }
 
       const result = await response.json();
-      console.log('Onboarding data saved successfully:', result);
+      console.log('✅ Onboarding data saved successfully:', result);
       
       return result;
     } catch (error) {
-      console.error('Failed to save onboarding data:', error);
+      console.warn('⚠️ Failed to save onboarding data:', error);
       // Don't block the user experience - still proceed
       return null;
     } finally {
@@ -101,6 +110,14 @@ export function OnboardingFlow({ onComplete, isDark }: OnboardingFlowProps) {
         
         // Save to Supabase in the background
         await saveOnboardingData(completeData);
+        
+        // Show success message with locale awareness
+        const locale = getLocaleFromPostcode(completeData.postcode);
+        if (isSupabaseConfigured()) {
+          toast.success('profile saved successfully!');
+        } else {
+          toast.success(`profile saved to ${locale === 'US' ? 'device' : 'device'}!`);
+        }
         
         // Complete the onboarding flow
         onComplete(completeData);
@@ -126,26 +143,17 @@ export function OnboardingFlow({ onComplete, isDark }: OnboardingFlowProps) {
     <div className={`min-h-screen transition-all duration-500 ease-out`}>
       
       {/* Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 z-40">
-        <div className="h-1 bg-current bg-opacity-10">
-          <div 
-            className="h-full bg-current transition-all duration-700 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
+
 
       {/* Step Counter */}
-      <div className="fixed top-6 left-6 z-30">
-        <span className="text-sm opacity-60">
-          {currentStep + 1} / {steps.length}
-        </span>
+      <div className="fixed top-20 left-6 z-30">
+
       </div>
 
       {/* Saving Indicator */}
       {isSaving && (
-        <div className="fixed top-16 left-6 z-30">
-          <span className="text-sm opacity-60">saving...</span>
+        <div className="fixed top-32 left-6 z-30">
+          <span className="zz-small opacity-60">saving...</span>
         </div>
       )}
 
