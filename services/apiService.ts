@@ -1,5 +1,4 @@
-
-import { finalConfig, validateConfig, hasService } from './config';
+import { validateConfig } from './config';
 import { supabase, userService, tipsService, locationService } from './supabase';
 import { CarbonFootprint } from './carbonCalculations';
 
@@ -84,8 +83,43 @@ export interface ZaiResponse {
   priority: number;
 }
 
+// Import OnboardingData type
+interface OnboardingData {
+  name: string;
+  postcode: string;
+  homeType: 'apartment' | 'house' | 'shared';
+  energySource: 'gas' | 'electric' | 'renewable' | 'mixed';
+  transport: 'car' | 'public' | 'walk' | 'cycle' | 'mixed';
+  carType?: 'petrol' | 'diesel' | 'hybrid' | 'electric';
+  rooms: number;
+  people: number;
+  monthlySpend: number;
+  goals: string[];
+}
+
 class ApiService {
   private baseUrl = 'https://api.zerozero.app'; // Mock API base
+
+  // Configuration helpers
+  private hasGoogleMaps() {
+    return import.meta.env?.VITE_GOOGLE_MAPS_API_KEY ? true : false;
+  }
+
+  private hasOpenAI() {
+    return import.meta.env?.VITE_OPENAI_API_KEY ? true : false;
+  }
+
+  private hasTwilio() {
+    return import.meta.env?.VITE_TWILIO_ACCOUNT_SID ? true : false;
+  }
+
+  private getGoogleMapsKey() {
+    return import.meta.env?.VITE_GOOGLE_MAPS_API_KEY || '';
+  }
+
+  private getOpenAIKey() {
+    return import.meta.env?.VITE_OPENAI_API_KEY || '';
+  }
 
   // Real Google Maps integration with fallback
   async getLocationFromPostcode(postcode: string): Promise<LocationData> {
@@ -107,9 +141,9 @@ class ApiService {
       }
 
       // Try Google Maps Geocoding API if available
-      if (hasService.googleMaps()) {
+      if (this.hasGoogleMaps()) {
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${postcode}&key=${finalConfig.googleMaps.apiKey}`
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${postcode}&key=${this.getGoogleMapsKey()}`
         );
         
         const data = await response.json();
@@ -254,7 +288,7 @@ class ApiService {
     carbonFootprint: CarbonFootprint,
     location: LocationData
   ): Promise<PersonalizedTip[]> {
-    if (!hasService.openai()) {
+    if (!this.hasOpenAI()) {
       console.warn('OpenAI not configured, using mock tips');
       return this.getMockTips(userData, carbonFootprint);
     }
@@ -307,7 +341,7 @@ class ApiService {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${finalConfig.openai.apiKey}`,
+          'Authorization': `Bearer ${this.getOpenAIKey()}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -379,14 +413,14 @@ class ApiService {
     coordinates: { lat: number; lng: number },
     query: string
   ): Promise<LocalBusiness[]> {
-    if (!hasService.googleMaps()) {
+    if (!this.hasGoogleMaps()) {
       console.warn('Google Maps not configured, using mock businesses');
       return this.getMockBusinesses(coordinates);
     }
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinates.lat},${coordinates.lng}&radius=5000&keyword=sustainable+organic+${query}&key=${finalConfig.googleMaps.apiKey}`
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinates.lat},${coordinates.lng}&radius=5000&keyword=sustainable+organic+${query}&key=${this.getGoogleMapsKey()}`
       );
       
       if (!response.ok) {
@@ -507,7 +541,7 @@ class ApiService {
     userData: OnboardingData,
     context: any
   ): Promise<ZaiResponse> {
-    if (!hasService.openai()) {
+    if (!this.hasOpenAI()) {
       // Fallback response
       return {
         message: `Hi ${userData.name}! I'd love to chat, but my AI features need to be configured. For now, I can help you explore your sustainability insights through the dashboard!`,
@@ -521,7 +555,7 @@ class ApiService {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${finalConfig.openai.apiKey}`,
+          'Authorization': `Bearer ${this.getOpenAIKey()}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -570,7 +604,7 @@ class ApiService {
 
   // SMS notifications (mock implementation)
   async sendSMSNotification(phoneNumber: string, message: string): Promise<boolean> {
-    if (!hasService.twilio()) {
+    if (!this.hasTwilio()) {
       console.warn('Twilio not configured, SMS sending disabled');
       return false;
     }

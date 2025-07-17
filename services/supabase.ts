@@ -1,11 +1,9 @@
 
 import { getSupabaseClient } from '../utils/supabase/client';
-import { finalConfig, hasService } from './config';
 
 // Use the singleton Supabase client to avoid multiple instances
-export const supabase = finalConfig.supabase.url && finalConfig.supabase.anonKey
-  ? getSupabaseClient()
-  : null;
+// The client is configured via environment variables in the client.tsx file
+export const supabase = getSupabaseClient();
 
 // Types for our database
 export interface User {

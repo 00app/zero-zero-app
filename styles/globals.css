@@ -1039,6 +1039,72 @@ button:active {
   opacity: 0.6;
 }
 
+/* Water Quality Card Styles */
+.zz-water-rating-excellent {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.zz-water-rating-good {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.zz-water-rating-fair {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fed7aa;
+}
+
+.zz-water-rating-poor {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Dark theme adjustments for water quality ratings */
+.dark .zz-water-rating-excellent {
+  background-color: #064e3b;
+  color: #6ee7b7;
+  border: 1px solid #065f46;
+}
+
+.dark .zz-water-rating-good {
+  background-color: #1e3a8a;
+  color: #93c5fd;
+  border: 1px solid #1e40af;
+}
+
+.dark .zz-water-rating-fair {
+  background-color: #78350f;
+  color: #fbbf24;
+  border: 1px solid #92400e;
+}
+
+.dark .zz-water-rating-poor {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #991b1b;
+}
+
+/* Water quality data loading animations */
+.zz-water-loading {
+  animation: water-wave 2s ease-in-out infinite;
+}
+
+@keyframes water-wave {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
 /* Focus visible for accessibility */
 *:focus-visible {
   outline: 2px solid var(--zz-accent);

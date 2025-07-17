@@ -6,6 +6,7 @@ import { FloatingActionButtons } from './FloatingActionButtons';
 import { Settings } from './Settings';
 import { ZaiChatModal } from './ZaiChatModal';
 import { TaskCardsSection } from './TaskCardsSection';
+import { WaterQualityCard } from './WaterQualityCard';
 
 interface DashboardProps {
   userData: OnboardingData;
@@ -222,6 +223,13 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
         {/* Task Cards Section */}
         <div className="mb-16">
           <TaskCardsSection userData={userData} />
+        </div>
+
+        {/* Water Quality Section */}
+        <div className="mb-16">
+          <h2 className="zz-h2 mb-4">water quality insights</h2>
+          <p className="zz-p1 opacity-60 mb-8">real-time environmental data from your region</p>
+          <WaterQualityCard userData={userData} isDark={isDark} />
         </div>
 
         {/* Overview Cards Grid */}
