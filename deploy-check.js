@@ -1,219 +1,171 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+import { config } from 'dotenv';
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 
-console.log('🚀 Zero Zero: GitHub Deployment Check\n');
+config();
 
-// Deployment readiness checklist
-const deploymentChecks = [
-  {
-    name: 'Clean Structure',
-    check: () => !fs.existsSync(path.join(__dirname, 'src')),
-    message: 'No duplicate src/ directory'
-  },
-  {
-    name: 'Environment Variables',
-    check: () => {
-      const envPath = path.join(__dirname, '.env');
-      if (!fs.existsSync(envPath)) return false;
-      const content = fs.readFileSync(envPath, 'utf8');
-      return content.includes('VITE_SUPABASE_URL') && 
-             content.includes('VITE_OPENAI_API_KEY');
-    },
-    message: 'Environment variables configured'
-  },
-  {
-    name: 'Package Configuration',
-    check: () => {
-      const packagePath = path.join(__dirname, 'package.json');
-      if (!fs.existsSync(packagePath)) return false;
-      const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-      return pkg.scripts.build && pkg.scripts.dev;
-    },
-    message: 'Build scripts configured'
-  },
-  {
-    name: 'TypeScript Configuration',
-    check: () => fs.existsSync(path.join(__dirname, 'tsconfig.json')),
-    message: 'TypeScript configuration present'
-  },
-  {
-    name: 'Vite Configuration',
-    check: () => fs.existsSync(path.join(__dirname, 'vite.config.ts')),
-    message: 'Vite configuration present'
-  },
-  {
-    name: 'Deployment Config',
-    check: () => fs.existsSync(path.join(__dirname, 'netlify.toml')) || 
-                 fs.existsSync(path.join(__dirname, 'vercel.json')),
-    message: 'Deployment configuration present'
-  },
-  {
-    name: 'Git Ignore',
-    check: () => {
-      const gitignorePath = path.join(__dirname, '.gitignore');
-      if (!fs.existsSync(gitignorePath)) return false;
-      const content = fs.readFileSync(gitignorePath, 'utf8');
-      return content.includes('node_modules') && content.includes('dist');
-    },
-    message: 'Git ignore configured'
-  },
-  {
-    name: 'Main Components',
-    check: () => {
-      const requiredFiles = [
-        'App.tsx',
-        'main.tsx',
-        'styles/globals.css',
-        'components/dashboard/Dashboard.tsx',
-        'services/aiService.ts'
-      ];
-      return requiredFiles.every(file => 
-        fs.existsSync(path.join(__dirname, file))
-      );
-    },
-    message: 'Core components present'
-  }
-];
+console.log('🚀 Zero Zero Deployment Check');
+console.log('=============================');
 
-// Run all checks
-let allPassed = true;
-const results = [];
+let hasErrors = false;
+let warnings = 0;
 
-deploymentChecks.forEach(({ name, check, message }) => {
-  const passed = check();
-  const status = passed ? '✅' : '❌';
-  console.log(`${status} ${name}: ${message}`);
-  results.push({ name, passed, message });
-  if (!passed) allPassed = false;
-});
-
-console.log('\n📊 Deployment Readiness Summary:');
-console.log(`   Passed: ${results.filter(r => r.passed).length}/${results.length}`);
-console.log(`   Status: ${allPassed ? '✅ Ready for deployment' : '❌ Issues need attention'}`);
-
-// Check for environment variables specifically
-console.log('\n🔧 Environment Variables:');
-const envPath = path.join(__dirname, '.env');
-if (fs.existsSync(envPath)) {
-  const envContent = fs.readFileSync(envPath, 'utf8');
-  const envVars = [
-    'VITE_SUPABASE_URL',
-    'VITE_SUPABASE_ANON_KEY', 
-    'VITE_OPENAI_API_KEY'
-  ];
+// Check if dist directory exists
+console.log('\n📁 Build Output:');
+if (existsSync(join(process.cwd(), 'dist'))) {
+  console.log('✅ dist/ directory exists');
   
-  envVars.forEach(envVar => {
-    const hasVar = envContent.includes(`${envVar}=`);
-    console.log(`   ${hasVar ? '✅' : '❌'} ${envVar}`);
-  });
-} else {
-  console.log('   ❌ No .env file found');
-}
-
-// Check package.json dependencies
-console.log('\n📦 Dependencies Check:');
-const packagePath = path.join(__dirname, 'package.json');
-if (fs.existsSync(packagePath)) {
-  const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-  const criticalDeps = [
-    'react',
-    'react-dom',
-    'framer-motion',
-    'openai',
-    '@supabase/supabase-js',
-    'typescript',
-    'vite'
-  ];
-  
-  criticalDeps.forEach(dep => {
-    const hasDep = pkg.dependencies[dep] || pkg.devDependencies[dep];
-    console.log(`   ${hasDep ? '✅' : '❌'} ${dep}`);
-  });
-}
-
-// File size analysis
-console.log('\n📏 Project Size Analysis:');
-const getDirectorySize = (dirPath) => {
-  if (!fs.existsSync(dirPath)) return 0;
-  let size = 0;
-  const items = fs.readdirSync(dirPath);
-  
-  items.forEach(item => {
-    const itemPath = path.join(dirPath, item);
-    const stats = fs.statSync(itemPath);
-    
-    if (stats.isDirectory() && item !== 'node_modules') {
-      size += getDirectorySize(itemPath);
-    } else if (stats.isFile()) {
-      size += stats.size;
+  // Check for critical build files
+  const buildFiles = ['index.html', 'assets'];
+  buildFiles.forEach(file => {
+    if (existsSync(join(process.cwd(), 'dist', file))) {
+      console.log(`✅ dist/${file} exists`);
+    } else {
+      console.log(`❌ dist/${file} missing`);
+      hasErrors = true;
     }
   });
+} else {
+  console.log('❌ dist/ directory missing - run npm run build first');
+  hasErrors = true;
+}
+
+// Check Netlify configuration
+console.log('\n🌐 Netlify Configuration:');
+if (existsSync(join(process.cwd(), 'netlify.toml'))) {
+  console.log('✅ netlify.toml exists');
   
-  return size;
-};
+  try {
+    const netlifyConfig = readFileSync(join(process.cwd(), 'netlify.toml'), 'utf8');
+    if (netlifyConfig.includes('npm run build')) {
+      console.log('✅ Build command configured');
+    } else {
+      console.log('⚠️  Build command not found in netlify.toml');
+      warnings++;
+    }
+    
+    if (netlifyConfig.includes('publish = "dist"')) {
+      console.log('✅ Publish directory configured');
+    } else {
+      console.log('⚠️  Publish directory not configured');
+      warnings++;
+    }
+  } catch (error) {
+    console.log(`❌ Error reading netlify.toml: ${error.message}`);
+    hasErrors = true;
+  }
+} else {
+  console.log('⚠️  netlify.toml missing - manual configuration required');
+  warnings++;
+}
 
-const projectSize = getDirectorySize(__dirname);
-const projectSizeMB = (projectSize / 1024 / 1024).toFixed(2);
-console.log(`   Project size (excluding node_modules): ${projectSizeMB} MB`);
+// Check Netlify functions
+console.log('\n🔧 Netlify Functions:');
+if (existsSync(join(process.cwd(), 'netlify/functions'))) {
+  console.log('✅ netlify/functions directory exists');
+  
+  if (existsSync(join(process.cwd(), 'netlify/functions/openai-chat.js'))) {
+    console.log('✅ OpenAI chat function exists');
+  } else {
+    console.log('⚠️  OpenAI chat function missing');
+    warnings++;
+  }
+} else {
+  console.log('⚠️  netlify/functions directory missing');
+  warnings++;
+}
 
-// Build test (dry run)
-console.log('\n🔨 Build Check:');
+// Check environment variables for production
+console.log('\n🔐 Production Environment Variables:');
+const prodEnvVars = [
+  'VITE_SUPABASE_URL',
+  'VITE_SUPABASE_ANON_KEY',
+  'VITE_OPENAI_API_KEY',
+  'VITE_GOOGLE_MAPS_API_KEY'
+];
+
+prodEnvVars.forEach(envVar => {
+  const value = process.env[envVar];
+  if (value && value.trim()) {
+    console.log(`✅ ${envVar}: Configured`);
+  } else {
+    console.log(`❌ ${envVar}: Missing - required for production`);
+    hasErrors = true;
+  }
+});
+
+// Check package.json for deployment
+console.log('\n📦 Package.json Deployment Settings:');
 try {
-  const { execSync } = require('child_process');
+  const packageJson = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8'));
   
-  console.log('   Running TypeScript check...');
-  execSync('npx tsc --noEmit', { stdio: 'pipe' });
-  console.log('   ✅ TypeScript check passed');
+  if (packageJson.engines?.node) {
+    console.log(`✅ Node version specified: ${packageJson.engines.node}`);
+  } else {
+    console.log('⚠️  Node version not specified in engines');
+    warnings++;
+  }
   
+  if (packageJson.engines?.npm) {
+    console.log(`✅ NPM version specified: ${packageJson.engines.npm}`);
+  } else {
+    console.log('⚠️  NPM version not specified in engines');
+    warnings++;
+  }
+  
+  if (packageJson.scripts?.build) {
+    console.log('✅ Build script configured');
+  } else {
+    console.log('❌ Build script missing');
+    hasErrors = true;
+  }
 } catch (error) {
-  console.log('   ❌ TypeScript check failed');
-  console.log('   Error:', error.message.split('\n')[0]);
-  allPassed = false;
+  console.log(`❌ Error reading package.json: ${error.message}`);
+  hasErrors = true;
 }
 
-// Final recommendations
-console.log('\n💡 Deployment Recommendations:');
-
-if (allPassed) {
-  console.log('🎉 Zero Zero is ready for GitHub deployment!');
-  console.log('\nNext steps:');
-  console.log('1. git add .');
-  console.log('2. git commit -m "feat: zero zero ready for deployment"');
-  console.log('3. git push origin main');
-  console.log('4. Configure your hosting platform with environment variables');
-  console.log('5. Set build command: npm run build');
-  console.log('6. Set publish directory: dist');
+// Check TypeScript configuration
+console.log('\n📝 TypeScript Configuration:');
+if (existsSync(join(process.cwd(), 'tsconfig.json'))) {
+  console.log('✅ tsconfig.json exists');
+  
+  try {
+    const tsConfig = JSON.parse(readFileSync(join(process.cwd(), 'tsconfig.json'), 'utf8'));
+    if (tsConfig.compilerOptions?.target) {
+      console.log(`✅ TypeScript target: ${tsConfig.compilerOptions.target}`);
+    } else {
+      console.log('⚠️  TypeScript target not specified');
+      warnings++;
+    }
+  } catch (error) {
+    console.log(`❌ Error reading tsconfig.json: ${error.message}`);
+    hasErrors = true;
+  }
 } else {
-  console.log('🔧 Fix the issues above before deployment:');
-  
-  const failedChecks = results.filter(r => !r.passed);
-  failedChecks.forEach(({ name, message }) => {
-    console.log(`   • Fix ${name}: ${message}`);
-  });
-  
-  console.log('\nThen run this script again to verify');
+  console.log('❌ tsconfig.json missing');
+  hasErrors = true;
 }
 
-// Design compliance check
-console.log('\n🎨 Zero Zero Design Compliance:');
-const cssPath = path.join(__dirname, 'styles/globals.css');
-if (fs.existsSync(cssPath)) {
-  const cssContent = fs.readFileSync(cssPath, 'utf8');
-  const designChecks = [
-    { check: cssContent.includes('--zz-black: #000000'), name: 'Black color defined' },
-    { check: cssContent.includes('--zz-white: #ffffff'), name: 'White color defined' },
-    { check: cssContent.includes('--zz-grey: #242424'), name: 'Grey color defined' },
-    { check: cssContent.includes('Roboto'), name: 'Roboto font configured' },
-    { check: cssContent.includes('zz-circle-button'), name: 'Button styles defined' }
-  ];
-  
-  designChecks.forEach(({ check, name }) => {
-    console.log(`   ${check ? '✅' : '❌'} ${name}`);
-  });
+// Final deployment readiness check
+console.log('\n🎯 Deployment Readiness:');
+console.log(`   Errors: ${hasErrors ? 'Yes' : 'None'}`);
+console.log(`   Warnings: ${warnings}`);
+
+if (hasErrors) {
+  console.log('\n❌ Deployment blocked - fix errors above');
+  console.log('   Run the following commands to resolve issues:');
+  console.log('   1. npm run build');
+  console.log('   2. Check environment variables');
+  console.log('   3. Verify configuration files');
+  process.exit(1);
+} else if (warnings > 0) {
+  console.log('\n⚠️  Deployment ready with warnings');
+  console.log('   Consider addressing warnings for optimal deployment');
+  process.exit(0);
 } else {
-  console.log('   ❌ styles/globals.css not found');
+  console.log('\n✅ Deployment ready!');
+  console.log('   Your Zero Zero app is ready for production deployment');
+  process.exit(0);
 }
-
-console.log('\n✨ Zero Zero deployment check complete!');

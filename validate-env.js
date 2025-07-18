@@ -1,150 +1,131 @@
 #!/usr/bin/env node
 
-console.log('🔍 Zero Zero Environment Validation\n');
+import { config } from 'dotenv';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-// Check Node.js version
-const nodeVersion = process.version;
-console.log(`Node.js version: ${nodeVersion}`);
+config();
 
-// Check for .env file and load it manually since we're in Node context
-const fs = require('fs');
-const path = require('path');
-
-const envPath = path.join(__dirname, '.env');
-let envVars = {};
-
-if (fs.existsSync(envPath)) {
-  console.log('✅ .env file found');
-  try {
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const lines = envContent.split('\n');
-    
-    lines.forEach(line => {
-      const trimmedLine = line.trim();
-      if (trimmedLine && !trimmedLine.startsWith('#') && trimmedLine.includes('=')) {
-        const [key, ...valueParts] = trimmedLine.split('=');
-        const value = valueParts.join('=');
-        envVars[key.trim()] = value.trim();
-      }
-    });
-  } catch (error) {
-    console.log('❌ Could not read .env file:', error.message);
-  }
-} else {
-  console.log('❌ .env file not found');
-}
-
-// Required environment variables
-const requiredEnvVars = [
+const REQUIRED_ENV_VARS = [
   'VITE_SUPABASE_URL',
-  'VITE_SUPABASE_ANON_KEY', 
-  'VITE_OPENAI_API_KEY'
+  'VITE_SUPABASE_ANON_KEY',
+  'VITE_OPENAI_API_KEY',
+  'VITE_GOOGLE_MAPS_API_KEY'
 ];
 
-const optionalEnvVars = [
-  'VITE_GOOGLE_MAPS_API_KEY',
+const OPTIONAL_ENV_VARS = [
+  'VITE_AIR_QUALITY_API_KEY',
+  'VITE_TWILIO_ACCOUNT_SID',
+  'VITE_TWILIO_AUTH_TOKEN',
+  'VITE_TWILIO_PHONE',
   'VITE_APP_NAME',
-  'VITE_AI_ASSISTANT_NAME',
-  'OPENAI_API_KEY'
+  'VITE_AI_ASSISTANT_NAME'
 ];
 
+console.log('🔍 Zero Zero Environment Validation');
+console.log('=====================================');
+
+let hasErrors = false;
+
+// Check required environment variables
 console.log('\n📋 Required Environment Variables:');
-requiredEnvVars.forEach(envVar => {
-  const value = envVars[envVar] || process.env[envVar];
-  const status = value ? '✅' : '❌';
-  const preview = value ? `${value.substring(0, 20)}...` : 'Not set';
-  console.log(`  ${status} ${envVar}: ${preview}`);
+REQUIRED_ENV_VARS.forEach(envVar => {
+  const value = process.env[envVar];
+  if (value && value.trim()) {
+    console.log(`✅ ${envVar}: ${value.substring(0, 20)}...`);
+  } else {
+    console.log(`❌ ${envVar}: Missing or empty`);
+    hasErrors = true;
+  }
 });
 
+// Check optional environment variables
 console.log('\n📋 Optional Environment Variables:');
-optionalEnvVars.forEach(envVar => {
-  const value = envVars[envVar] || process.env[envVar];
-  const status = value ? '✅' : '⚪';
-  const preview = value ? `${value.substring(0, 20)}...` : 'Not set';
-  console.log(`  ${status} ${envVar}: ${preview}`);
+OPTIONAL_ENV_VARS.forEach(envVar => {
+  const value = process.env[envVar];
+  if (value && value.trim()) {
+    console.log(`✅ ${envVar}: ${value.substring(0, 20)}...`);
+  } else {
+    console.log(`⚠️  ${envVar}: Not set (optional)`);
+  }
 });
 
-// Validate Supabase URL format
-const supabaseUrl = envVars.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-if (supabaseUrl) {
-  const isValidSupabaseUrl = supabaseUrl.includes('supabase.co') && supabaseUrl.startsWith('https://');
-  console.log(`\n🔗 Supabase URL validation: ${isValidSupabaseUrl ? '✅ Valid' : '❌ Invalid format'}`);
-  
-  if (isValidSupabaseUrl) {
-    const projectId = supabaseUrl.split('//')[1].split('.')[0];
-    console.log(`   Project ID: ${projectId}`);
-  }
+// Check package.json
+console.log('\n📦 Package Configuration:');
+try {
+  const packageJson = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8'));
+  console.log(`✅ Package name: ${packageJson.name}`);
+  console.log(`✅ Version: ${packageJson.version}`);
+  console.log(`✅ Node version: ${packageJson.engines?.node || 'Not specified'}`);
+  console.log(`✅ NPM version: ${packageJson.engines?.npm || 'Not specified'}`);
+} catch (error) {
+  console.log(`❌ Package.json error: ${error.message}`);
+  hasErrors = true;
 }
 
-// Validate OpenAI API key format
-const openaiKey = envVars.VITE_OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
-if (openaiKey) {
-  const isValidOpenAIKey = openaiKey.startsWith('sk-');
-  console.log(`🤖 OpenAI API Key validation: ${isValidOpenAIKey ? '✅ Valid format' : '❌ Invalid format'}`);
-  
-  if (isValidOpenAIKey) {
-    console.log(`   Key length: ${openaiKey.length} characters`);
-  }
-}
-
-// Check for other environment files
-const envFiles = ['.env', '.env.local', '.env.development', '.env.production'];
-console.log('\n📄 Environment files:');
-envFiles.forEach(file => {
-  const exists = fs.existsSync(path.join(__dirname, file));
-  console.log(`  ${exists ? '✅' : '⚪'} ${file}`);
-});
-
-// Overall status
-const allRequired = requiredEnvVars.every(envVar => envVars[envVar] || process.env[envVar]);
-console.log(`\n🎯 Overall status: ${allRequired ? '✅ Ready for production' : '⚠️  Missing required variables'}`);
-
-if (!allRequired) {
-  console.log('\n💡 To fix missing variables:');
-  console.log('  1. Create a .env file in your project root');
-  console.log('  2. Add the missing environment variables');
-  console.log('  3. Restart your development server');
-  console.log('\nExample .env file:');
-  console.log('VITE_SUPABASE_URL=https://your-project.supabase.co');
-  console.log('VITE_SUPABASE_ANON_KEY=your-anon-key-here');
-  console.log('VITE_OPENAI_API_KEY=sk-your-openai-key-here');
-}
-
-// Check Zero Zero specific structure
-console.log('\n🏗️  Zero Zero Structure Check:');
-const zeroZeroFiles = [
+// Check critical files
+console.log('\n📁 Critical Files:');
+const criticalFiles = [
   'App.tsx',
-  'components/dashboard/ZaiChat.tsx',
-  'services/aiService.ts',
+  'main.tsx',
+  'index.html',
+  'vite.config.ts',
+  'tsconfig.json',
+  'tailwind.config.js',
   'styles/globals.css'
 ];
 
-const missingZZFiles = [];
-zeroZeroFiles.forEach(file => {
-  const exists = fs.existsSync(path.join(__dirname, file));
-  console.log(`  ${exists ? '✅' : '❌'} ${file}`);
-  if (!exists) missingZZFiles.push(file);
+criticalFiles.forEach(file => {
+  try {
+    readFileSync(join(process.cwd(), file), 'utf8');
+    console.log(`✅ ${file}: Found`);
+  } catch (error) {
+    console.log(`❌ ${file}: Missing`);
+    hasErrors = true;
+  }
 });
 
-if (missingZZFiles.length === 0) {
-  console.log('✅ Zero Zero structure complete');
-} else {
-  console.log('❌ Missing Zero Zero files - run cleanup.js to fix');
+// Environment-specific checks
+console.log('\n🔧 Environment-Specific Checks:');
+
+// Supabase URL validation
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+if (supabaseUrl) {
+  if (supabaseUrl.includes('supabase.co')) {
+    console.log('✅ Supabase URL format looks correct');
+  } else {
+    console.log('⚠️  Supabase URL format may be incorrect');
+  }
 }
 
-// Check for duplicate src directory
-const srcExists = fs.existsSync(path.join(__dirname, 'src'));
-if (srcExists) {
-  console.log('\n⚠️  Duplicate src/ directory detected!');
-  console.log('   Run: npm run cleanup to remove conflicts');
-} else {
-  console.log('\n✅ No duplicate src/ directory conflicts');
+// OpenAI API key validation
+const openaiKey = process.env.VITE_OPENAI_API_KEY;
+if (openaiKey) {
+  if (openaiKey.startsWith('sk-')) {
+    console.log('✅ OpenAI API key format looks correct');
+  } else {
+    console.log('⚠️  OpenAI API key format may be incorrect');
+  }
 }
 
-console.log('\n🚀 Zero Zero Environment Check Complete!');
+// Google Maps API key validation
+const mapsKey = process.env.VITE_GOOGLE_MAPS_API_KEY;
+if (mapsKey) {
+  if (mapsKey.startsWith('AIza')) {
+    console.log('✅ Google Maps API key format looks correct');
+  } else {
+    console.log('⚠️  Google Maps API key format may be incorrect');
+  }
+}
 
-if (allRequired && missingZZFiles.length === 0 && !srcExists) {
-  console.log('🎉 Everything looks perfect! Ready to launch your sustainability app!');
+// Summary
+console.log('\n📊 Summary:');
+if (hasErrors) {
+  console.log('❌ Environment validation failed');
+  console.log('   Please fix the issues above before deploying');
+  process.exit(1);
 } else {
-  console.log('🔧 Some issues need attention - check the messages above');
+  console.log('✅ Environment validation passed');
+  console.log('   Your Zero Zero app is ready for deployment!');
+  process.exit(0);
 }
