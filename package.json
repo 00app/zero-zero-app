@@ -4,7 +4,14 @@
   "version": "2.0.0",
   "type": "module",
   "description": "Zero Zero - Sustainability app helping users save money, reduce carbon footprint, and improve well-being through real-time data and AI-powered insights",
-  "keywords": ["sustainability", "carbon-footprint", "money-saving", "ai", "vite", "react"],
+  "keywords": [
+    "sustainability",
+    "carbon-footprint",
+    "money-saving",
+    "ai",
+    "vite",
+    "react"
+  ],
   "scripts": {
     "dev": "node REMOVE-DUPLICATE-SRC.js && vite",
     "build": "node REMOVE-DUPLICATE-SRC.js && tsc --noEmit && vite build",
