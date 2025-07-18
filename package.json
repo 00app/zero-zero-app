@@ -30,7 +30,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
-    "react-speech-recognition": "^4.1.4",
+    "react-speech-recognition": "^3.11.0",
     "twilio": "^4.11.0"
   },
   "devDependencies": {
@@ -73,4 +73,3 @@
     ]
   }
 }
-
