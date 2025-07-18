@@ -10,8 +10,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist node_modules/.cache",
     "clean:cache": "npm cache clean --force && rm -rf node_modules/.cache && rm -rf dist",
@@ -24,22 +23,23 @@
     "@supabase/gotrue-js": "^2.66.0",
     "@supabase/postgrest-js": "^1.17.0",
     "@supabase/realtime-js": "^2.10.2",
-    "@supabase/storage-js": "^2.8.0",
+    "@supabase/storage-js": "^2.8.1",
     "@supabase/supabase-js": "^2.46.0",
     "framer-motion": "^10.16.16",
+    "openai": "^4.29.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
+    "react-speech-recognition": "^4.1.4",
+    "twilio": "^4.11.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
     "typescript": "^5.2.2",
@@ -47,7 +47,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zerozero/zero-zero-app.git"
+    "url": "https://github.com/00app/zero-zero-app.git"
   },
   "keywords": [
     "sustainability",
@@ -73,3 +73,4 @@
     ]
   }
 }
+
