@@ -1,131 +1,157 @@
 #!/usr/bin/env node
 
-import { config } from 'dotenv';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+/**
+ * Environment Variables Validation Script
+ * Ensures all required environment variables are present and valid
+ */
 
-config();
+const fs = require('fs');
+const path = require('path');
 
-const REQUIRED_ENV_VARS = [
-  'VITE_SUPABASE_URL',
-  'VITE_SUPABASE_ANON_KEY',
-  'VITE_OPENAI_API_KEY',
-  'VITE_GOOGLE_MAPS_API_KEY'
+// Color codes for console output
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m'
+};
+
+console.log(`${colors.cyan}${colors.bright}🔧 Zero Zero Environment Validation${colors.reset}`);
+console.log('=====================================\n');
+
+// Load environment variables
+const envPath = path.join(__dirname, '.env');
+const envExamplePath = path.join(__dirname, '.env.example');
+
+// Check if .env file exists
+if (!fs.existsSync(envPath)) {
+  console.log(`${colors.red}❌ .env file not found${colors.reset}`);
+  console.log(`${colors.yellow}💡 Copy .env.example to .env and add your API keys${colors.reset}`);
+  process.exit(1);
+}
+
+// Load .env file
+const envContent = fs.readFileSync(envPath, 'utf8');
+const envLines = envContent.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+const envVars = {};
+
+envLines.forEach(line => {
+  const [key, ...valueParts] = line.split('=');
+  if (key && valueParts.length > 0) {
+    envVars[key.trim()] = valueParts.join('=').trim();
+  }
+});
+
+// Required environment variables
+const requiredVars = [
+  {
+    name: 'VITE_SUPABASE_URL',
+    validator: (value) => value && value.includes('supabase.co'),
+    description: 'Supabase project URL'
+  },
+  {
+    name: 'VITE_SUPABASE_ANON_KEY',
+    validator: (value) => value && value.startsWith('eyJ'),
+    description: 'Supabase anonymous key'
+  },
+  {
+    name: 'VITE_OPENAI_API_KEY',
+    validator: (value) => value && value.startsWith('sk-'),
+    description: 'OpenAI API key for Zai chat'
+  },
+  {
+    name: 'VITE_GOOGLE_MAPS_API_KEY',
+    validator: (value) => value && value.startsWith('AIza'),
+    description: 'Google Maps API key for location services'
+  }
 ];
 
-const OPTIONAL_ENV_VARS = [
-  'VITE_AIR_QUALITY_API_KEY',
-  'VITE_TWILIO_ACCOUNT_SID',
-  'VITE_TWILIO_AUTH_TOKEN',
-  'VITE_TWILIO_PHONE',
-  'VITE_APP_NAME',
-  'VITE_AI_ASSISTANT_NAME'
+// Optional environment variables
+const optionalVars = [
+  {
+    name: 'VITE_APP_NAME',
+    default: 'zero zero',
+    description: 'Application name'
+  },
+  {
+    name: 'VITE_AI_ASSISTANT_NAME',
+    default: 'zai',
+    description: 'AI assistant name'
+  }
 ];
-
-console.log('🔍 Zero Zero Environment Validation');
-console.log('=====================================');
 
 let hasErrors = false;
+let warningCount = 0;
 
-// Check required environment variables
-console.log('\n📋 Required Environment Variables:');
-REQUIRED_ENV_VARS.forEach(envVar => {
-  const value = process.env[envVar];
-  if (value && value.trim()) {
-    console.log(`✅ ${envVar}: ${value.substring(0, 20)}...`);
+console.log(`${colors.blue}📊 Core Services:${colors.reset}`);
+requiredVars.forEach(({ name, validator, description }) => {
+  const value = envVars[name];
+  const isValid = validator(value);
+  
+  if (isValid) {
+    console.log(`   ${colors.green}✅ ${name}${colors.reset}: ${description}`);
   } else {
-    console.log(`❌ ${envVar}: Missing or empty`);
+    console.log(`   ${colors.red}❌ ${name}${colors.reset}: ${description} - ${value ? 'invalid format' : 'missing'}`);
     hasErrors = true;
   }
 });
 
-// Check optional environment variables
-console.log('\n📋 Optional Environment Variables:');
-OPTIONAL_ENV_VARS.forEach(envVar => {
-  const value = process.env[envVar];
-  if (value && value.trim()) {
-    console.log(`✅ ${envVar}: ${value.substring(0, 20)}...`);
+console.log(`\n${colors.blue}🔧 Optional Services:${colors.reset}`);
+optionalVars.forEach(({ name, default: defaultValue, description }) => {
+  const value = envVars[name];
+  
+  if (value) {
+    console.log(`   ${colors.green}✅ ${name}${colors.reset}: ${description}`);
   } else {
-    console.log(`⚠️  ${envVar}: Not set (optional)`);
+    console.log(`   ${colors.yellow}⚠️ ${name}${colors.reset}: ${description} - using default: "${defaultValue}"`);
+    warningCount++;
   }
 });
 
+// Node.js and npm version check
+console.log(`\n${colors.blue}🔍 Build Environment:${colors.reset}`);
+
+const nodeVersion = process.version;
+const requiredNodeVersion = '18.20.8';
+
+if (nodeVersion.includes(requiredNodeVersion)) {
+  console.log(`   ${colors.green}✅ Node.js${colors.reset}: ${nodeVersion}`);
+} else {
+  console.log(`   ${colors.yellow}⚠️ Node.js${colors.reset}: ${nodeVersion} (recommended: v${requiredNodeVersion})`);
+  warningCount++;
+}
+
 // Check package.json
-console.log('\n📦 Package Configuration:');
-try {
-  const packageJson = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8'));
-  console.log(`✅ Package name: ${packageJson.name}`);
-  console.log(`✅ Version: ${packageJson.version}`);
-  console.log(`✅ Node version: ${packageJson.engines?.node || 'Not specified'}`);
-  console.log(`✅ NPM version: ${packageJson.engines?.npm || 'Not specified'}`);
-} catch (error) {
-  console.log(`❌ Package.json error: ${error.message}`);
+const packageJsonPath = path.join(__dirname, 'package.json');
+if (fs.existsSync(packageJsonPath)) {
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  if (packageJson.engines) {
+    console.log(`   ${colors.green}✅ Package.json engines${colors.reset}: configured`);
+  } else {
+    console.log(`   ${colors.yellow}⚠️ Package.json engines${colors.reset}: not configured`);
+    warningCount++;
+  }
+} else {
+  console.log(`   ${colors.red}❌ package.json${colors.reset}: not found`);
   hasErrors = true;
 }
 
-// Check critical files
-console.log('\n📁 Critical Files:');
-const criticalFiles = [
-  'App.tsx',
-  'main.tsx',
-  'index.html',
-  'vite.config.ts',
-  'tsconfig.json',
-  'tailwind.config.js',
-  'styles/globals.css'
-];
-
-criticalFiles.forEach(file => {
-  try {
-    readFileSync(join(process.cwd(), file), 'utf8');
-    console.log(`✅ ${file}: Found`);
-  } catch (error) {
-    console.log(`❌ ${file}: Missing`);
-    hasErrors = true;
-  }
-});
-
-// Environment-specific checks
-console.log('\n🔧 Environment-Specific Checks:');
-
-// Supabase URL validation
-const supabaseUrl = process.env.VITE_SUPABASE_URL;
-if (supabaseUrl) {
-  if (supabaseUrl.includes('supabase.co')) {
-    console.log('✅ Supabase URL format looks correct');
-  } else {
-    console.log('⚠️  Supabase URL format may be incorrect');
-  }
-}
-
-// OpenAI API key validation
-const openaiKey = process.env.VITE_OPENAI_API_KEY;
-if (openaiKey) {
-  if (openaiKey.startsWith('sk-')) {
-    console.log('✅ OpenAI API key format looks correct');
-  } else {
-    console.log('⚠️  OpenAI API key format may be incorrect');
-  }
-}
-
-// Google Maps API key validation
-const mapsKey = process.env.VITE_GOOGLE_MAPS_API_KEY;
-if (mapsKey) {
-  if (mapsKey.startsWith('AIza')) {
-    console.log('✅ Google Maps API key format looks correct');
-  } else {
-    console.log('⚠️  Google Maps API key format may be incorrect');
-  }
-}
-
 // Summary
-console.log('\n📊 Summary:');
+console.log(`\n${colors.cyan}📋 Summary:${colors.reset}`);
 if (hasErrors) {
-  console.log('❌ Environment validation failed');
-  console.log('   Please fix the issues above before deploying');
+  console.log(`   ${colors.red}❌ Validation failed${colors.reset}: ${hasErrors ? 'Missing required variables' : 'All core services configured'}`);
+  console.log(`   ${colors.yellow}💡 Fix the errors above before deploying${colors.reset}`);
   process.exit(1);
 } else {
-  console.log('✅ Environment validation passed');
-  console.log('   Your Zero Zero app is ready for deployment!');
-  process.exit(0);
+  console.log(`   ${colors.green}✅ Validation passed${colors.reset}: All core services configured`);
+  if (warningCount > 0) {
+    console.log(`   ${colors.yellow}⚠️ ${warningCount} warnings${colors.reset}: Optional configurations missing`);
+  }
+  console.log(`   ${colors.cyan}🚀 Ready for deployment${colors.reset}`);
 }
+
+console.log('\n=====================================');
