@@ -1,10 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './styles/globals.css';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+// This is a duplicate main.tsx file in the src folder.
+// The main main.tsx is in the root directory.
+// This file is no longer needed and should be removed.
+export {};

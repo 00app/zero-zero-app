@@ -24,17 +24,30 @@ class ZeroZeroAIService {
   constructor() {
     console.log('🤖 Initializing Zero Zero AI Service...');
     
+    // Debug environment variables
+    console.log('🔍 Environment check:', {
+      hasImportMeta: typeof import.meta !== 'undefined',
+      hasImportMetaEnv: typeof import.meta !== 'undefined' && !!import.meta.env,
+      hasProcess: typeof process !== 'undefined',
+      hasProcessEnv: typeof process !== 'undefined' && !!process.env,
+      hasWindow: typeof window !== 'undefined'
+    });
+    
     // Get OpenAI API key from environment with multiple fallbacks
     this.apiKey = this.getEnvVar('VITE_OPENAI_API_KEY') || 
                  this.getEnvVar('OPENAI_API_KEY') || 
                  '';
     
+    console.log('🔑 API Key search result:', {
+      found: !!this.apiKey,
+      isValid: this.apiKey.startsWith('sk-'),
+      length: this.apiKey.length,
+      prefix: this.apiKey ? this.apiKey.substring(0, 7) + '...' : 'none'
+    });
+    
     if (this.apiKey && this.apiKey.startsWith('sk-')) {
       this.isConfigured = true;
-      console.log('✅ OpenAI API key configured:', {
-        keyPrefix: this.apiKey.substring(0, 20) + '...',
-        length: this.apiKey.length
-      });
+      console.log('✅ OpenAI API key configured successfully');
       this.initializeOpenAI();
     } else {
       console.log('📱 OpenAI API key not configured - using mock responses');
@@ -207,6 +220,43 @@ If asked about something outside sustainability/lifestyle, gently redirect to ze
     };
 
     return regions[area] || 'the uk';
+  }
+
+  async testConnection(): Promise<{ success: boolean; message: string }> {
+    try {
+      if (!this.isConfigured) {
+        return {
+          success: false,
+          message: 'OpenAI API key not configured. Add VITE_OPENAI_API_KEY to your environment variables.'
+        };
+      }
+
+      await this.initializeOpenAI();
+      
+      if (!this.openai) {
+        return {
+          success: false,
+          message: 'Failed to initialize OpenAI client.'
+        };
+      }
+
+      // Test with a simple request
+      const testResponse = await this.openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: "test" }],
+        max_tokens: 10,
+      });
+
+      return {
+        success: true,
+        message: 'OpenAI connection successful!'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Connection failed: ${error.message}`
+      };
+    }
   }
 
   async getZaiTip(userData: OnboardingData): Promise<string> {

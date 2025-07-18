@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IntroAnimation } from './components/intro/IntroAnimation';
 import { OnboardingFlow, OnboardingData } from './components/onboarding/OnboardingFlow';
 import { Dashboard } from './components/dashboard/Dashboard';
-import { ConfigStatus } from './components/ConfigStatus';
+
 
 type AppState = 'intro' | 'onboarding' | 'dashboard';
 
@@ -154,7 +154,7 @@ export default function App() {
       color: 'var(--zz-text)',
       fontFamily: 'Roboto, sans-serif'
     }}>
-      <ConfigStatus />
+
       
       <AnimatePresence mode="wait">
         {currentState === 'intro' && (
@@ -165,7 +165,11 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <IntroAnimation onComplete={handleIntroComplete} />
+            <IntroAnimation 
+              onComplete={handleIntroComplete}
+              isDark={isDark}
+              onThemeToggle={toggleTheme}
+            />
           </motion.div>
         )}
         
