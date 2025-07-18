@@ -21,7 +21,12 @@ export function DashboardTopBar({ userData, isDark, onThemeToggle, onReset }: Da
         borderBottom: '1px solid var(--zz-grey)'
       }}
     >
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between p-4" style={{
+        border: 'none',
+        stroke: 'none',
+        color: 'inherit',
+        background: 'transparent'
+      }}>
         {/* Space for balance */}
         <div style={{ width: '40px' }}></div>
 

@@ -189,31 +189,24 @@ export function RoomsPeopleStep({ onComplete, initialValue }: RoomsPeopleStepPro
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="flex justify-start"
+              className="flex justify-end"
             >
               <button
                 onClick={handleComplete}
-                className="px-8 py-4 border-2 bg-transparent transition-all duration-300"
+                className="zz-circle-button"
                 style={{
-                  borderColor: 'var(--zz-accent)',
-                  color: 'var(--zz-text)',
-                  fontSize: 'var(--text-medium)',
-                  fontWeight: 'var(--font-regular)',
-                  fontFamily: 'Roboto, sans-serif',
-                  borderRadius: '0'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'var(--zz-accent)';
-                  e.currentTarget.style.color = 'var(--zz-bg)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'var(--zz-text)';
+                  width: '56px',
+                  height: '56px',
+                  fontSize: '20px',
+                  border: 'none',
+                  background: 'var(--zz-accent)',
+                  color: 'var(--zz-bg)',
+                  fontFamily: 'Roboto, sans-serif'
                 }}
                 aria-label="Continue to next step"
               >
                 <GlitchText isGlitching={isGlitching}>
-                  continue →
+                  →
                 </GlitchText>
               </button>
             </motion.div>

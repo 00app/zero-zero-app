@@ -117,13 +117,15 @@ export function TransportStep({ onComplete, initialValue }: TransportStepProps) 
           <button 
             onClick={handleNext} 
             disabled={transport.length === 0}
-            className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+            className="zz-circle-button"
             style={{
-              borderColor: transport.length > 0 ? 'var(--zz-accent)' : 'var(--zz-border)',
-              background: 'transparent',
-              color: transport.length > 0 ? 'var(--zz-text)' : 'var(--zz-border)',
+              width: '56px',
+              height: '56px',
               fontSize: '20px',
-              lineHeight: 1,
+              border: 'none',
+              background: transport.length > 0 ? 'var(--zz-accent)' : 'var(--zz-border)',
+              color: transport.length > 0 ? 'var(--zz-bg)' : 'var(--zz-text)',
+              fontFamily: 'Roboto, sans-serif',
               cursor: transport.length > 0 ? 'pointer' : 'not-allowed',
               opacity: transport.length > 0 ? 1 : 0.3
             }}

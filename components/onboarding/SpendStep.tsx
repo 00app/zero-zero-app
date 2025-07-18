@@ -118,13 +118,15 @@ export function SpendStep({ onComplete, initialValue }: SpendStepProps) {
           
           <button 
             onClick={handleNext} 
-            className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+            className="zz-circle-button"
             style={{
-              borderColor: 'var(--zz-accent)',
-              background: 'transparent',
-              color: 'var(--zz-text)',
+              width: '56px',
+              height: '56px',
               fontSize: '20px',
-              lineHeight: 1,
+              border: 'none',
+              background: 'var(--zz-accent)',
+              color: 'var(--zz-bg)',
+              fontFamily: 'Roboto, sans-serif',
               cursor: 'pointer'
             }}
           >

@@ -91,13 +91,15 @@ export function EnergySourceStep({ onComplete, initialValue }: EnergySourceStepP
           <button 
             onClick={handleNext} 
             disabled={!energySource}
-            className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+            className="zz-circle-button"
             style={{
-              borderColor: energySource ? 'var(--zz-accent)' : 'var(--zz-border)',
-              background: 'transparent',
-              color: energySource ? 'var(--zz-text)' : 'var(--zz-border)',
+              width: '56px',
+              height: '56px',
               fontSize: '20px',
-              lineHeight: 1,
+              border: 'none',
+              background: energySource ? 'var(--zz-accent)' : 'var(--zz-border)',
+              color: energySource ? 'var(--zz-bg)' : 'var(--zz-text)',
+              fontFamily: 'Roboto, sans-serif',
               cursor: energySource ? 'pointer' : 'not-allowed',
               opacity: energySource ? 1 : 0.3
             }}

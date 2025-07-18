@@ -116,13 +116,15 @@ export function GoalsStep({ onComplete, initialValue }: GoalsStepProps) {
           <button 
             onClick={handleNext} 
             disabled={goals.length === 0}
-            className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+            className="zz-circle-button"
             style={{
-              borderColor: goals.length > 0 ? 'var(--zz-accent)' : 'var(--zz-border)',
-              background: 'transparent',
-              color: goals.length > 0 ? 'var(--zz-text)' : 'var(--zz-border)',
+              width: '56px',
+              height: '56px',
               fontSize: '20px',
-              lineHeight: 1,
+              border: 'none',
+              background: goals.length > 0 ? 'var(--zz-accent)' : 'var(--zz-border)',
+              color: goals.length > 0 ? 'var(--zz-bg)' : 'var(--zz-text)',
+              fontFamily: 'Roboto, sans-serif',
               cursor: goals.length > 0 ? 'pointer' : 'not-allowed',
               opacity: goals.length > 0 ? 1 : 0.3
             }}

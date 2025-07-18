@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const words = [
-  "what", "if", "you", "could", "make", "change?",
+  "what", "if", "you", "could", "make", "a", "change?",
   "reset.",
   "reclaim.",
   "reduce.",
@@ -123,9 +123,16 @@ export function IntroAnimation({ onComplete, isDark = true, onThemeToggle }: Int
                 ease: [0.16, 1, 0.3, 1]
               }}
               className="flex items-center justify-center mt-12"
-              style={{ width: '6vw', minWidth: '60px', minHeight: '60px' }}
+              style={{ width: 'clamp(8rem, 20vw, 20rem)', height: 'clamp(8rem, 20vw, 20rem)' }}
             >
-              <button
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ 
+                  duration: 0.8, 
+                  ease: [0.16, 1, 0.3, 1],
+                  delay: 0.3
+                }}
                 onClick={handleRestart}
                 className="rounded-full border-2 flex items-center justify-center relative overflow-hidden"
                 style={{
@@ -138,12 +145,17 @@ export function IntroAnimation({ onComplete, isDark = true, onThemeToggle }: Int
                   transition: 'all 0.3s ease',
                   width: '100%',
                   height: '100%',
-                  fontSize: 'clamp(1rem, 0.7vw, 1.2rem)',
+                  fontSize: 'clamp(1.8rem, 3vw, 3.2rem)',
                   textTransform: 'lowercase',
                   userSelect: 'none',
                   padding: 0,
                   margin: 0
                 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  borderColor: 'var(--zz-accent)'
+                }}
+                whileTap={{ scale: 0.95 }}
                 aria-label="restart onboarding"
               >
                 <motion.div
@@ -210,7 +222,7 @@ export function IntroAnimation({ onComplete, isDark = true, onThemeToggle }: Int
                     </>
                   )}
                 </motion.div>
-              </button>
+              </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
