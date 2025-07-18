@@ -87,29 +87,34 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
 
   return (
     <>
-      {/* Zai Chat Bubble */}
-      <button
+      {/* Zai Chat Bubble - Text Symbol Only */}
+      <motion.button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-40"
         style={{
-          width: '64px',
-          height: '64px',
+          width: '56px',
+          height: '56px',
+          fontSize: '20px',
+          border: 'none',
+          borderRadius: '50%',
           background: 'var(--zz-accent)',
           color: 'var(--zz-bg)',
-          border: '2px solid var(--zz-accent)',
-          borderRadius: '50%',
-          fontSize: '24px',
-          fontWeight: 'var(--font-regular)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'all var(--duration-normal) var(--ease-out)'
+          fontFamily: 'Roboto, sans-serif',
+          fontWeight: 'var(--font-medium)'
         }}
-        title="chat with zai - your sustainability assistant"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        animate={{ 
+          scale: [1, 1.05, 1],
+          transition: { duration: 2, repeat: Infinity }
+        }}
       >
         zai
-      </button>
+      </motion.button>
 
       {/* Connection Status Indicator */}
       {!connectionStatus.isReady && (
@@ -117,7 +122,7 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
           className="fixed bottom-20 right-6 z-30 px-3 py-2 text-xs opacity-70"
           style={{
             background: 'var(--zz-card)',
-            border: '2px solid var(--zz-border)',
+            border: 'none',
             borderRadius: '0',
             color: 'var(--zz-text)',
             fontFamily: 'Roboto, sans-serif',
@@ -138,7 +143,7 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
-            style={{ background: 'rgba(0, 0, 0, 0.5)' }}
+            style={{ background: 'rgba(0, 0, 0, 0.7)' }}
           >
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.95 }}
@@ -148,7 +153,7 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
               className="w-full max-w-md mx-auto"
               style={{
                 background: 'var(--zz-card)',
-                border: '2px solid var(--zz-border)',
+                border: 'none',
                 borderRadius: '0',
                 maxHeight: '80vh',
                 display: 'flex',
@@ -157,8 +162,11 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
             >
               {/* Header */}
               <div 
-                className="flex items-center justify-between p-4 border-b"
-                style={{ borderColor: 'var(--zz-border)' }}
+                className="flex items-center justify-between p-4"
+                style={{ 
+                  borderBottom: '1px solid var(--zz-grey)',
+                  borderColor: 'var(--zz-grey)'
+                }}
               >
                 <div>
                   <div className="zz-medium" style={{ lineHeight: 1.2 }}>
@@ -179,8 +187,8 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
                   style={{
                     width: '32px',
                     height: '32px',
-                    fontSize: '16px',
-                    border: '2px solid var(--zz-border)',
+                    fontSize: '20px',
+                    border: 'none',
                     borderRadius: '50%',
                     background: 'transparent',
                     color: 'var(--zz-text)',
@@ -219,7 +227,7 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
                         color: message.role === 'user' 
                           ? 'var(--zz-bg)' 
                           : 'var(--zz-text)',
-                        borderRadius: '8px',
+                        borderRadius: '0',
                         fontSize: 'var(--text-small)',
                         lineHeight: 1.4,
                         whiteSpace: 'pre-wrap'
@@ -241,7 +249,7 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
                       style={{
                         background: 'var(--zz-grey)',
                         color: 'var(--zz-text)',
-                        borderRadius: '8px',
+                        borderRadius: '0',
                         fontSize: 'var(--text-small)'
                       }}
                     >
@@ -260,8 +268,11 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
 
               {/* Input */}
               <div 
-                className="p-4 border-t"
-                style={{ borderColor: 'var(--zz-border)' }}
+                className="p-4"
+                style={{ 
+                  borderTop: '1px solid var(--zz-grey)',
+                  borderColor: 'var(--zz-grey)'
+                }}
               >
                 <div className="flex gap-2">
                   <textarea
@@ -273,8 +284,8 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
                     style={{
                       flex: 1,
                       background: 'transparent',
-                      border: '2px solid var(--zz-border)',
-                      borderRadius: '8px',
+                      border: 'none',
+                      borderRadius: '0',
                       color: 'var(--zz-text)',
                       padding: '12px',
                       fontSize: 'var(--text-medium)',
@@ -296,7 +307,7 @@ export function ZaiChat({ userData, isDark }: ZaiChatProps) {
                       width: '44px',
                       height: '44px',
                       fontSize: '18px',
-                      border: '2px solid var(--zz-border)',
+                      border: 'none',
                       borderRadius: '50%',
                       background: 'transparent',
                       color: 'var(--zz-text)',

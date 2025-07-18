@@ -1,76 +1,144 @@
-import React, { useState } from 'react';
-import { OnboardingData } from './OnboardingFlow';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 interface HomeTypeStepProps {
-  data: Partial<OnboardingData>;
-  onNext: (data: Partial<OnboardingData>) => void;
-  onBack: () => void;
-  currentStep: number;
-  totalSteps: number;
+  onComplete: (homeType: string) => void;
+  initialValue?: string;
 }
 
-export function HomeTypeStep({ data, onNext, onBack }: HomeTypeStepProps) {
-  const [homeType, setHomeType] = useState<OnboardingData['homeType'] | null>(data.homeType || null);
+export function HomeTypeStep({ onComplete, initialValue }: HomeTypeStepProps) {
+  const [selectedType, setSelectedType] = useState(initialValue || '');
+  const [questionText, setQuestionText] = useState('');
+  const [showOptions, setShowOptions] = useState(false);
 
-  const handleNext = () => {
-    if (homeType) {
-      onNext({ homeType });
-    }
-  };
+  const fullQuestion = "what type of home do you live in?";
+  const typingSpeed = 60;
 
-  const options: { value: OnboardingData['homeType']; label: string }[] = [
-    { value: 'flat', label: 'flat' },
-    { value: 'house', label: 'house' },
-    { value: 'shared', label: 'shared house' },
+  const homeTypes = [
+    'flat',
+    'terraced house',
+    'semi-detached house',
+    'detached house',
+    'student accommodation',
+    'shared house'
   ];
 
+  useEffect(() => {
+    let currentChar = 0;
+    const typeInterval = setInterval(() => {
+      if (currentChar <= fullQuestion.length) {
+        setQuestionText(fullQuestion.slice(0, currentChar));
+        currentChar++;
+      } else {
+        clearInterval(typeInterval);
+        setTimeout(() => setShowOptions(true), 300);
+      }
+    }, typingSpeed);
+
+    return () => clearInterval(typeInterval);
+  }, []);
+
+  const handleSelect = (type: string) => {
+    setSelectedType(type);
+    setTimeout(() => {
+      onComplete(type);
+    }, 500);
+  };
+
   return (
-    <div className="space-y-12">
-      <div className="space-y-6">
-        <div>
-          <button onClick={onBack} className="zz-circle-button">
-            ←
-          </button>
-        </div>
-        
-        <div className="space-y-4">
-          <h1 className="zz-h1">what type of home?</h1>
+    <div className="space-y-8">
+      {/* Question */}
+      <div className="text-left">
+        <div 
+          className="zz-large mb-8"
+          style={{ 
+            fontWeight: 'var(--font-regular)',
+            lineHeight: 1.2,
+            minHeight: '29px',
+            textAlign: 'left'
+          }}
+        >
+          {questionText}
+          {questionText.length < fullQuestion.length && (
+            <motion.span
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="inline-block w-1 h-6 ml-1"
+              style={{ background: 'var(--zz-text)' }}
+            />
+          )}
         </div>
       </div>
-      
-      <div className="space-y-8">
-        <div className="zz-pill-container">
-          {options.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setHomeType(option.value)}
-              className={`zz-pill ${
-                homeType === option.value ? 'selected' : ''
-              }`}
+
+      {/* Options */}
+      {showOptions && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-4"
+        >
+          {homeTypes.map((type, index) => (
+            <motion.button
+              key={type}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ 
+                duration: 0.3, 
+                delay: index * 0.1,
+                ease: [0.16, 1, 0.3, 1]
+              }}
+              onClick={() => handleSelect(type)}
+              className="w-full p-6 text-left border-2 bg-transparent transition-all duration-300"
+              style={{
+                borderColor: selectedType === type ? 'var(--zz-accent)' : 'var(--zz-border)',
+                color: 'var(--zz-text)',
+                fontSize: 'var(--text-medium)',
+                fontWeight: 'var(--font-regular)',
+                fontFamily: 'Roboto, sans-serif',
+                lineHeight: 1.4,
+                borderRadius: '0',
+                background: selectedType === type ? 'var(--zz-accent)' : 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedType !== type) {
+                  e.currentTarget.style.borderColor = 'var(--zz-accent)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedType !== type) {
+                  e.currentTarget.style.borderColor = 'var(--zz-border)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
             >
-              {option.label}
-            </button>
+              <span style={{ 
+                color: selectedType === type ? 'var(--zz-bg)' : 'var(--zz-text)' 
+              }}>
+                {type}
+              </span>
+            </motion.button>
           ))}
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="opacity-60">
-            <p className="zz-medium">
-              {homeType && `home type: ${homeType}`}
-            </p>
-          </div>
-          
-          <button 
-            onClick={handleNext} 
-            disabled={!homeType}
-            className={`zz-circle-button ${
-              !homeType ? 'opacity-30 cursor-not-allowed' : ''
-            }`}
+        </motion.div>
+      )}
+
+      {/* Selected Answer Display */}
+      {selectedType && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="text-left"
+        >
+          <div 
+            className="zz-medium opacity-70"
+            style={{ lineHeight: 1.4 }}
           >
-            →
-          </button>
-        </div>
-      </div>
+            {selectedType} ✓
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,8 @@ import { DashboardTopBar } from './DashboardTopBar';
 import { DashboardCard } from './DashboardCard';
 import { ZaiChat } from './ZaiChat';
 import { OnboardingData } from '../onboarding/OnboardingFlow';
+import aiService from '../../services/aiService';
+import googleMapsService from '../../services/googleMapsService';
 
 interface DashboardProps {
   userData: OnboardingData;
@@ -18,14 +20,14 @@ const cardCategories = [
 ];
 
 const categoryData = {
-  travel: { title: 'travel', emoji: '🚗', color: 'var(--zz-accent)' },
-  food: { title: 'food', emoji: '🥗', color: 'var(--zz-accent)' },
-  devices: { title: 'devices', emoji: '📱', color: 'var(--zz-accent)' },
-  shopping: { title: 'shopping', emoji: '🛍️', color: 'var(--zz-accent)' },
-  holidays: { title: 'holidays', emoji: '✈️', color: 'var(--zz-accent)' },
-  water: { title: 'water', emoji: '💧', color: 'var(--zz-accent)' },
-  pets: { title: 'pets', emoji: '🐕', color: 'var(--zz-accent)' },
-  rewards: { title: 'rewards', emoji: '🏆', color: 'var(--zz-accent)' }
+  travel: { title: 'travel', color: 'var(--zz-accent)' },
+  food: { title: 'food', color: 'var(--zz-accent)' },
+  devices: { title: 'devices', color: 'var(--zz-accent)' },
+  shopping: { title: 'shopping', color: 'var(--zz-accent)' },
+  holidays: { title: 'holidays', color: 'var(--zz-accent)' },
+  water: { title: 'water', color: 'var(--zz-accent)' },
+  pets: { title: 'pets', color: 'var(--zz-accent)' },
+  rewards: { title: 'rewards', color: 'var(--zz-accent)' }
 };
 
 export function Dashboard({ userData, isDark, onReset, onThemeToggle }: DashboardProps) {
@@ -67,7 +69,7 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
     }
   };
 
-  // Touch and swipe handling
+  // Touch and swipe handling for mobile
   const handlePan = (event: any, info: PanInfo) => {
     const { offset, velocity } = info;
     const swipeThreshold = 50;
@@ -127,12 +129,15 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
   const cardId = `${currentCategory}-${currentCardIndex}`;
 
   return (
-    <div className="min-h-screen flex flex-col zz-dashboard" style={{ 
-      background: 'var(--zz-bg)',
-      color: 'var(--zz-text)',
-      touchAction: 'none',
-      userSelect: 'none'
-    }}>
+    <div 
+      className="min-h-screen w-full flex flex-col zz-dashboard" 
+      style={{ 
+        background: 'var(--zz-bg)',
+        color: 'var(--zz-text)',
+        touchAction: 'none',
+        userSelect: 'none'
+      }}
+    >
       {/* Top Bar */}
       <DashboardTopBar 
         userData={userData}
@@ -141,136 +146,172 @@ export function Dashboard({ userData, isDark, onReset, onThemeToggle }: Dashboar
         onReset={onReset}
       />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 relative">
+      {/* Main Content Container - Centered and Full Width */}
+      <div className="flex-1 w-full flex flex-col items-center justify-center relative">
         
-        {/* Up Navigation */}
+        {/* Up Navigation Arrow */}
         {currentCategoryIndex > 0 && !expandedCard && (
           <motion.button
             initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 0.6, y: 0 }}
-            whileHover={{ opacity: 1, y: -2 }}
-            whileTap={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ 
+              background: 'var(--zz-accent)',
+              color: 'var(--zz-bg)',
+              y: -2, 
+              scale: 1.1 
+            }}
+            whileTap={{ scale: 0.9 }}
             onClick={navigateUp}
-            className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20"
+            className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20"
             style={{
               background: 'transparent',
-              border: '2px solid var(--zz-border)',
               borderRadius: '50%',
               width: '48px',
               height: '48px',
               color: 'var(--zz-text)',
-              fontSize: 'var(--text-medium)',
+              fontSize: '20px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              fontFamily: 'Roboto, sans-serif',
+              lineHeight: 1,
+              border: 'none'
             }}
           >
             ↑
           </motion.button>
         )}
 
-        {/* Card Area */}
-        <div className="flex-1 flex items-center justify-center w-full max-w-sm relative">
+        {/* Navigation and Card Layout */}
+        <div className="w-full h-full flex items-center justify-center gap-2">
           
-          {/* Left Navigation */}
-          {currentCardIndex > 0 && !expandedCard && (
-            <motion.button
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 0.6, x: 0 }}
-              whileHover={{ opacity: 1, x: -2 }}
-              whileTap={{ opacity: 1, x: 0 }}
-              onClick={navigateLeft}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20"
-              style={{
-                background: 'transparent',
-                border: '2px solid var(--zz-border)',
-                borderRadius: '50%',
-                width: '48px',
-                height: '48px',
-                color: 'var(--zz-text)',
-                fontSize: 'var(--text-medium)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              ←
-            </motion.button>
-          )}
+          {/* Left Navigation Arrow - Outside Card */}
+          <div className="flex items-center" style={{ padding: '5px' }}>
+            {currentCardIndex > 0 && !expandedCard ? (
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                whileHover={{ 
+                  background: 'var(--zz-accent)',
+                  color: 'var(--zz-bg)',
+                  x: -2, 
+                  scale: 1.1 
+                }}
+                whileTap={{ scale: 0.9 }}
+                onClick={navigateLeft}
+                style={{
+                  background: 'transparent',
+                  borderRadius: '50%',
+                  width: '48px',
+                  height: '48px',
+                  color: 'var(--zz-text)',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: 'Roboto, sans-serif',
+                  lineHeight: 1,
+                  border: 'none'
+                }}
+              >
+                ←
+              </motion.button>
+            ) : (
+              <div style={{ width: '48px', height: '48px' }} />
+            )}
+          </div>
 
-          {/* Card */}
-          <motion.div
-            key={cardId}
-            drag={!expandedCard}
-            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-            dragElastic={0.1}
-            onPanEnd={handlePan}
-            className="w-full max-w-sm"
-            style={{ cursor: expandedCard ? 'default' : 'grab' }}
-            whileDrag={{ cursor: 'grabbing' }}
-          >
-            <DashboardCard
-              category={currentCategory}
-              cardIndex={currentCardIndex}
-              userData={userData}
-              isDark={isDark}
-              isExpanded={expandedCard === cardId}
-              onExpand={() => setExpandedCard(expandedCard === cardId ? null : cardId)}
-            />
-          </motion.div>
-
-          {/* Right Navigation */}
-          {currentCardIndex < 2 && !expandedCard && (
-            <motion.button
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 0.6, x: 0 }}
-              whileHover={{ opacity: 1, x: 2 }}
-              whileTap={{ opacity: 1, x: 0 }}
-              onClick={navigateRight}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20"
-              style={{
-                background: 'transparent',
-                border: '2px solid var(--zz-border)',
-                borderRadius: '50%',
-                width: '48px',
-                height: '48px',
-                color: 'var(--zz-text)',
-                fontSize: 'var(--text-medium)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+          {/* Main Card Container - Centered */}
+          <div className="flex-1 flex justify-center">
+            <motion.div
+              key={cardId}
+              drag={!expandedCard}
+              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              dragElastic={0.1}
+              onPanEnd={handlePan}
+              className="w-full flex justify-center"
+              style={{ cursor: expandedCard ? 'default' : 'grab' }}
+              whileDrag={{ cursor: 'grabbing' }}
             >
-              →
-            </motion.button>
-          )}
+              <DashboardCard
+                category={currentCategory}
+                cardIndex={currentCardIndex}
+                userData={userData}
+                isDark={isDark}
+                isExpanded={expandedCard === cardId}
+                onExpand={() => setExpandedCard(expandedCard === cardId ? null : cardId)}
+              />
+            </motion.div>
+          </div>
+
+          {/* Right Navigation Arrow - Outside Card */}
+          <div className="flex items-center" style={{ padding: '5px' }}>
+            {currentCardIndex < 2 && !expandedCard ? (
+              <motion.button
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                whileHover={{ 
+                  background: 'var(--zz-accent)',
+                  color: 'var(--zz-bg)',
+                  x: 2, 
+                  scale: 1.1 
+                }}
+                whileTap={{ scale: 0.9 }}
+                onClick={navigateRight}
+                style={{
+                  background: 'transparent',
+                  borderRadius: '50%',
+                  width: '48px',
+                  height: '48px',
+                  color: 'var(--zz-text)',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: 'Roboto, sans-serif',
+                  lineHeight: 1,
+                  border: 'none'
+                }}
+              >
+                →
+              </motion.button>
+            ) : (
+              <div style={{ width: '48px', height: '48px' }} />
+            )}
+          </div>
         </div>
 
-        {/* Down Navigation */}
+        {/* Down Navigation Arrow */}
         {currentCategoryIndex < cardCategories.length - 1 && !expandedCard && (
           <motion.button
             initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 0.6, y: 0 }}
-            whileHover={{ opacity: 1, y: 2 }}
-            whileTap={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ 
+              background: 'var(--zz-accent)',
+              color: 'var(--zz-bg)',
+              y: 2, 
+              scale: 1.1 
+            }}
+            whileTap={{ scale: 0.9 }}
             onClick={navigateDown}
-            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20"
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
             style={{
               background: 'transparent',
-              border: '2px solid var(--zz-border)',
               borderRadius: '50%',
               width: '48px',
               height: '48px',
               color: 'var(--zz-text)',
-              fontSize: 'var(--text-medium)',
+              fontSize: '20px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              fontFamily: 'Roboto, sans-serif',
+              lineHeight: 1,
+              border: 'none'
             }}
           >
             ↓

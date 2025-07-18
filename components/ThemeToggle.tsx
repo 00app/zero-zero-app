@@ -9,12 +9,11 @@ export function ThemeToggle({ isDark, onToggle }: ThemeToggleProps) {
   return (
     <button 
       onClick={onToggle}
-      className="zz-circle-button"
       style={{
         width: '48px',
         height: '48px',
         fontSize: 'var(--text-medium)',
-        border: '2px solid var(--zz-border)',
+        border: 'none',
         background: 'transparent',
         color: 'var(--zz-text)',
         borderRadius: '50%',
@@ -22,7 +21,8 @@ export function ThemeToggle({ isDark, onToggle }: ThemeToggleProps) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'all var(--duration-normal) var(--ease-out)'
+        transition: 'all var(--duration-normal) var(--ease-out)',
+        fontFamily: 'Roboto, sans-serif'
       }}
       title={isDark ? 'switch to light mode' : 'switch to dark mode'}
     >

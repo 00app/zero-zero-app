@@ -1,27 +1,21 @@
-
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { NameStep } from './NameStep';
 import { LocationStep } from './LocationStep';
 import { HomeTypeStep } from './HomeTypeStep';
-import { EnergySourceStep } from './EnergySourceStep';
-import { TransportStep } from './TransportStep';
 import { RoomsPeopleStep } from './RoomsPeopleStep';
+import { TransportStep } from './TransportStep';
+import { EnergySourceStep } from './EnergySourceStep';
 import { SpendStep } from './SpendStep';
 import { GoalsStep } from './GoalsStep';
-import { projectId, publicAnonKey } from '../../utils/supabase/info';
-import { isSupabaseConfigured } from '../../utils/supabase/client';
-import { toast } from "sonner@2.0.3";
-import { getLocaleFromPostcode } from '../../utils/localization';
 
 export interface OnboardingData {
   name: string;
-  postcode: string;
-  homeType: 'flat' | 'house' | 'shared';
-  energySource: 'grid' | 'renewable' | 'mixed';
-  transport: 'car' | 'public' | 'bike' | 'walk' | 'mixed';
-  carType?: 'petrol' | 'diesel' | 'hybrid' | 'electric';
-  rooms: number;
-  people: number;
+  location: string;
+  homeType: string;
+  roomsAndPeople: { rooms: number; people: number };
+  transport: string[];
+  energySource: string;
   monthlySpend: number;
   goals: string[];
 }
@@ -29,151 +23,138 @@ export interface OnboardingData {
 interface OnboardingFlowProps {
   onComplete: (data: OnboardingData) => void;
   isDark: boolean;
+  onThemeToggle: () => void;
 }
 
-export function OnboardingFlow({ onComplete, isDark }: OnboardingFlowProps) {
+export function OnboardingFlow({ onComplete, isDark, onThemeToggle }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [data, setData] = useState<Partial<OnboardingData>>({
-    goals: []
-  });
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [data, setData] = useState<Partial<OnboardingData>>({});
 
   const steps = [
-    NameStep,
-    LocationStep,
-    HomeTypeStep,
-    EnergySourceStep,
-    TransportStep,
-    RoomsPeopleStep,
-    SpendStep,
-    GoalsStep,
+    { component: NameStep, key: 'name' },
+    { component: LocationStep, key: 'location' },
+    { component: HomeTypeStep, key: 'homeType' },
+    { component: RoomsPeopleStep, key: 'roomsAndPeople' },
+    { component: TransportStep, key: 'transport' },
+    { component: EnergySourceStep, key: 'energySource' },
+    { component: SpendStep, key: 'monthlySpend' },
+    { component: GoalsStep, key: 'goals' }
   ];
 
-  const saveOnboardingData = async (onboardingData: OnboardingData) => {
-    try {
-      setIsSaving(true);
-      
-      // Check if Supabase is configured before trying to save
-      if (!isSupabaseConfigured()) {
-        console.log('ℹ️ Supabase not configured - skipping data save (demo mode)');
-        return null;
-      }
-      
-      // Generate a unique ID for this user's onboarding session
-      const sessionId = `onboarding_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Save onboarding data to Supabase using the server endpoint
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-eebb7b0c/onboarding`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`,
-        },
-        body: JSON.stringify({
-          sessionId,
-          data: onboardingData,
-          timestamp: new Date().toISOString()
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('✅ Onboarding data saved successfully:', result);
-      
-      return result;
-    } catch (error) {
-      console.warn('⚠️ Failed to save onboarding data:', error);
-      // Don't block the user experience - still proceed
-      return null;
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleNext = async (stepData: Partial<OnboardingData>) => {
-    const newData = { ...data, ...stepData };
-    setData(newData);
-
-    setIsTransitioning(true);
+  const handleStepComplete = (stepData: any) => {
+    const stepKey = steps[currentStep].key;
+    const newData = { ...data };
     
-    setTimeout(async () => {
-      if (currentStep < steps.length - 1) {
-        setCurrentStep(currentStep + 1);
-        setIsTransitioning(false);
-      } else {
-        // Final step - save data and complete onboarding
-        const completeData = newData as OnboardingData;
-        
-        // Save to Supabase in the background
-        await saveOnboardingData(completeData);
-        
-        // Show success message with locale awareness
-        const locale = getLocaleFromPostcode(completeData.postcode);
-        if (isSupabaseConfigured()) {
-          toast.success('profile saved successfully!');
-        } else {
-          toast.success(`profile saved to ${locale === 'US' ? 'device' : 'device'}!`);
-        }
-        
-        // Complete the onboarding flow
-        onComplete(completeData);
-        setIsTransitioning(false);
-      }
-    }, 350);
-  };
-
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentStep(currentStep - 1);
-        setIsTransitioning(false);
-      }, 350);
+    // Handle the data based on step key
+    if (stepKey === 'roomsAndPeople') {
+      newData[stepKey] = stepData; // This should be an object { rooms: number, people: number }
+    } else {
+      newData[stepKey as keyof Partial<OnboardingData>] = stepData;
+    }
+    
+    setData(newData);
+    
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      // All steps complete
+      onComplete(newData as OnboardingData);
     }
   };
 
-  const CurrentStepComponent = steps[currentStep];
-  const progress = ((currentStep + 1) / steps.length) * 100;
+  const handleStepBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleStepNavigation = (stepIndex: number) => {
+    // Allow navigation to any step
+    if (stepIndex >= 0 && stepIndex < steps.length) {
+      setCurrentStep(stepIndex);
+    }
+  };
+
+  const CurrentStepComponent = steps[currentStep].component;
 
   return (
-    <div className={`min-h-screen transition-all duration-500 ease-out`}>
-      
-      {/* Progress Bar */}
-
-
-      {/* Step Counter */}
-      <div className="fixed top-20 left-6 z-30">
-
+    <div className="min-h-screen flex flex-col" style={{ 
+      background: 'var(--zz-bg)', 
+      color: 'var(--zz-text)'
+    }}>
+      {/* Header with theme toggle */}
+      <div className="w-full px-6 py-6">
+        <div className="flex items-center justify-between max-w-2xl mx-auto">
+          <div className="flex items-center gap-4">
+            {currentStep > 0 && (
+              <button
+                onClick={handleStepBack}
+                className="zz-circle-button"
+                style={{ 
+                  width: '40px', 
+                  height: '40px',
+                  fontSize: '18px'
+                }}
+              >
+                ←
+              </button>
+            )}
+          </div>
+          
+          <button
+            onClick={onThemeToggle}
+            className="zz-circle-button"
+            style={{ 
+              width: '40px', 
+              height: '40px',
+              fontSize: '16px'
+            }}
+          >
+            {isDark ? '☀' : '●'}
+          </button>
+        </div>
       </div>
 
-      {/* Saving Indicator */}
-      {isSaving && (
-        <div className="fixed top-32 left-6 z-30">
-          <span className="zz-small opacity-60">saving...</span>
-        </div>
-      )}
-
-      {/* Content */}
-      <div className={`min-h-screen transition-all duration-350 ease-out ${
-        isTransitioning ? 'opacity-50 scale-99' : 'opacity-100 scale-100'
-      }`}>
-        <div className="min-h-screen flex flex-col justify-center px-6">
-          <div className="max-w-4xl mx-auto w-full">
-            <div className="zz-fade-in">
-              <CurrentStepComponent
-                data={data}
-                onNext={handleNext}
-                onBack={handleBack}
-                currentStep={currentStep}
-                totalSteps={steps.length}
-                isDark={isDark}
+      {/* Progress indicator */}
+      <div className="w-full px-6 mb-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex justify-start gap-2">
+            {steps.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleStepNavigation(index)}
+                className="zz-progress-dot"
+                style={{
+                  background: index <= currentStep ? 'var(--zz-accent)' : 'transparent',
+                  borderColor: index <= currentStep ? 'var(--zz-accent)' : 'var(--zz-border)'
+                }}
+                aria-label={`${index < currentStep ? 'Return to' : index === currentStep ? 'Current' : 'Skip to'} step ${index + 1}`}
               />
-            </div>
+            ))}
           </div>
+        </div>
+      </div>
+
+      {/* Step content */}
+      <div className="flex-1 px-6">
+        <div className="max-w-2xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ 
+                duration: 0.4, 
+                ease: [0.16, 1, 0.3, 1] 
+              }}
+            >
+              <CurrentStepComponent
+                onComplete={handleStepComplete}
+                initialValue={data[steps[currentStep].key as keyof OnboardingData]}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>

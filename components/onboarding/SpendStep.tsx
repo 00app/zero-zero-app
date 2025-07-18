@@ -1,20 +1,16 @@
 
 import React, { useState } from 'react';
-import { OnboardingData } from './OnboardingFlow';
 
 interface SpendStepProps {
-  data: Partial<OnboardingData>;
-  onNext: (data: Partial<OnboardingData>) => void;
-  onBack: () => void;
-  currentStep: number;
-  totalSteps: number;
+  onComplete: (value: number) => void;
+  initialValue?: number;
 }
 
-export function SpendStep({ data, onNext, onBack }: SpendStepProps) {
-  const [monthlySpend, setMonthlySpend] = useState(data.monthlySpend || 2000);
+export function SpendStep({ onComplete, initialValue }: SpendStepProps) {
+  const [monthlySpend, setMonthlySpend] = useState(initialValue || 2000);
 
   const handleNext = () => {
-    onNext({ monthlySpend });
+    onComplete(monthlySpend);
   };
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,22 +19,45 @@ export function SpendStep({ data, onNext, onBack }: SpendStepProps) {
 
   return (
     <div className="space-y-12">
-      <div className="space-y-6">
-        <div>
-          <button onClick={onBack} className="zz-circle-button">
-            ←
-          </button>
-        </div>
-        
+      <div className="space-y-6 text-left">
         <div className="space-y-4">
-          <h1 className="zz-h1">monthly spending?</h1>
+          <div 
+            style={{ 
+              fontSize: '32px',
+              fontWeight: 'var(--font-regular)', 
+              lineHeight: 1.2,
+              fontFamily: 'Roboto, sans-serif',
+              color: 'var(--zz-text)',
+              textTransform: 'lowercase'
+            }}
+          >
+            monthly spending?
+          </div>
         </div>
       </div>
       
       <div className="space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="zz-h2 text-left">£{monthlySpend.toLocaleString()}</h2>
-          <p className="zz-p1 opacity-60 text-left">per month</p>
+        <div className="space-y-2 text-left">
+          <div style={{ 
+            fontSize: '48px',
+            fontWeight: 'var(--font-medium)', 
+            lineHeight: 1.2,
+            fontFamily: 'Roboto, sans-serif',
+            color: 'var(--zz-text)'
+          }}>
+            £{monthlySpend.toLocaleString()}
+          </div>
+          <div style={{ 
+            fontSize: '16px',
+            fontWeight: 'var(--font-regular)', 
+            lineHeight: 1.4,
+            fontFamily: 'Roboto, sans-serif',
+            color: 'var(--zz-text)',
+            opacity: 0.6,
+            textTransform: 'lowercase'
+          }}>
+            per month
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -51,28 +70,63 @@ export function SpendStep({ data, onNext, onBack }: SpendStepProps) {
             onChange={handleSliderChange}
             className="w-full h-2 appearance-none cursor-pointer"
             style={{
-              background: `linear-gradient(to right, #ffffff 0%, #ffffff ${((monthlySpend - 500) / (10000 - 500)) * 100}%, #242424 ${((monthlySpend - 500) / (10000 - 500)) * 100}%, #242424 100%)`,
+              background: `linear-gradient(to right, var(--zz-accent) 0%, var(--zz-accent) ${((monthlySpend - 500) / (10000 - 500)) * 100}%, var(--zz-grey) ${((monthlySpend - 500) / (10000 - 500)) * 100}%, var(--zz-grey) 100%)`,
               outline: 'none',
               border: 'none'
             }}
           />
           
           <div className="flex justify-between">
-            <span className="zz-p1 opacity-50">£500</span>
-            <span className="zz-p1 opacity-50">£10,000</span>
+            <span style={{ 
+              fontSize: '14px',
+              fontWeight: 'var(--font-regular)', 
+              lineHeight: 1.3,
+              fontFamily: 'Roboto, sans-serif',
+              color: 'var(--zz-text)',
+              opacity: 0.5
+            }}>
+              £500
+            </span>
+            <span style={{ 
+              fontSize: '14px',
+              fontWeight: 'var(--font-regular)', 
+              lineHeight: 1.3,
+              fontFamily: 'Roboto, sans-serif',
+              color: 'var(--zz-text)',
+              opacity: 0.5
+            }}>
+              £10,000
+            </span>
           </div>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div className="opacity-60">
-            <p className="zz-p1">
-              {monthlySpend && `£${monthlySpend.toLocaleString()}/month`}
-            </p>
+        <div className="flex items-center justify-between pt-4">
+          <div style={{ opacity: 0.6 }}>
+            <div 
+              style={{ 
+                fontSize: '14px',
+                fontWeight: 'var(--font-regular)', 
+                lineHeight: 1.3,
+                fontFamily: 'Roboto, sans-serif',
+                color: 'var(--zz-text)',
+                textTransform: 'lowercase'
+              }}
+            >
+              £{monthlySpend.toLocaleString()}/month
+            </div>
           </div>
           
           <button 
             onClick={handleNext} 
-            className="zz-circle-button"
+            className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+            style={{
+              borderColor: 'var(--zz-accent)',
+              background: 'transparent',
+              color: 'var(--zz-text)',
+              fontSize: '20px',
+              lineHeight: 1,
+              cursor: 'pointer'
+            }}
           >
             →
           </button>

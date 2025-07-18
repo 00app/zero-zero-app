@@ -250,7 +250,7 @@ const generateCardData = (category: string, cardIndex: number, userData: Onboard
     ],
     rewards: [
       {
-        title: 'zero zero points',
+        title: 'rewards program',
         carbonStat: 'track progress',
         moneyStat: 'earn rewards',
         zaiTip: 'completing actions earns points. redeem for discounts at eco-friendly brands and services.',
@@ -271,7 +271,7 @@ const generateCardData = (category: string, cardIndex: number, userData: Onboard
         }
       },
       {
-        title: 'impact dashboard',
+        title: 'impact tracking',
         carbonStat: 'total saved',
         moneyStat: 'annual savings',
         zaiTip: 'track your cumulative carbon and money savings. share achievements to inspire others.',
@@ -375,89 +375,144 @@ export function DashboardCard({
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
       <div 
-        className={`h-full border-2 transition-all duration-300`}
+        className={`h-full transition-all duration-300`}
         style={{ 
           background: 'var(--zz-card)',
-          borderColor: isExpanded ? 'var(--zz-accent)' : 'var(--zz-border)',
           borderRadius: '0',
-          padding: 'var(--spacing-md)',
-          minHeight: isExpanded ? '600px' : '400px'
+          paddingTop: '40px',
+          paddingBottom: '40px',
+          paddingLeft: '40px',
+          paddingRight: '40px',
+          minHeight: isExpanded ? '75vh' : '220px',
+          width: '100%',
+          minWidth: '75vw',
+          maxWidth: '100%',
+          maxHeight: isExpanded ? '90vh' : '220px',
+          overflow: 'hidden'
         }}
         onClick={handleCardClick}
       >
         {/* Card Header - Always clickable */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between mb-8">
           <div>
-            <div className="zz-small opacity-60 mb-2" style={{ 
+            <div style={{ 
+              fontSize: '14px',
+              fontWeight: 'var(--font-regular)', 
               lineHeight: 1.2,
-              textTransform: 'lowercase'
+              fontFamily: 'Roboto, sans-serif',
+              color: 'var(--zz-text)',
+              opacity: 0.6,
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              marginBottom: '8px'
             }}>
               {cardData.category}
             </div>
-            <div className="zz-large" style={{ 
-              fontWeight: 'var(--font-regular)', 
+            <div style={{ 
+              fontSize: '24px',
+              fontWeight: 'var(--font-medium)', 
               lineHeight: 1.2,
-              textTransform: 'lowercase'
+              textTransform: 'lowercase',
+              fontFamily: 'Roboto, sans-serif',
+              color: 'var(--zz-text)'
             }}>
               {cardData.title}
             </div>
           </div>
           
-          <motion.button
-            className="zz-large opacity-60 select-none p-2 -m-2"
-            animate={{ rotate: isExpanded ? 45 : 0 }}
-            transition={{ duration: 0.2 }}
-            style={{ lineHeight: 1, cursor: 'pointer' }}
+          <motion.div
+            className="w-12 h-12 rounded-full flex items-center justify-center cursor-pointer"
+            style={{
+              background: 'transparent',
+              color: 'var(--zz-text)',
+              fontSize: '24px',
+              fontWeight: 'var(--font-medium)',
+              lineHeight: 1,
+              fontFamily: 'Roboto, sans-serif'
+            }}
+            animate={{ scale: isExpanded ? 1.1 : 1 }}
+            transition={{ duration: 0.3 }}
             onClick={(e) => {
               e.stopPropagation();
               onExpand();
             }}
-            whileHover={{ opacity: 1, scale: 1.1 }}
+            whileHover={{ 
+              background: 'var(--zz-accent)',
+              color: 'var(--zz-bg)',
+              scale: 1.2 
+            }}
             whileTap={{ scale: 0.9 }}
           >
-            +
-          </motion.button>
+            {isExpanded ? '−' : '+'}
+          </motion.div>
         </div>
 
         {/* Collapsed View - Preview Stats */}
         {!isExpanded && (
           <motion.div 
-            className="space-y-4"
+            className="space-y-6"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            {/* Primary Stat - Carbon */}
             {cardData.carbonStat && (
-              <div className="flex justify-between items-center py-2">
-                <span className="zz-medium opacity-80" style={{ lineHeight: 1.2 }}>carbon</span>
-                <span className="zz-medium" style={{ fontWeight: 'var(--font-medium)', lineHeight: 1.2 }}>
+              <div className="mb-6">
+                <div style={{ 
+                  fontSize: '12px',
+                  fontWeight: 'var(--font-regular)', 
+                  lineHeight: 1.2,
+                  fontFamily: 'Roboto, sans-serif',
+                  color: 'var(--zz-text)',
+                  opacity: 0.6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  marginBottom: '12px'
+                }}>
+                  CARBON IMPACT
+                </div>
+                <div style={{ 
+                  fontSize: '48px',
+                  fontWeight: '900',
+                  lineHeight: 1,
+                  fontFamily: 'Roboto, sans-serif',
+                  color: 'var(--zz-text)'
+                }}>
                   {cardData.carbonStat}
-                </span>
-              </div>
-            )}
-            {cardData.moneyStat && (
-              <div className="flex justify-between items-center py-2">
-                <span className="zz-medium opacity-80" style={{ lineHeight: 1.2 }}>money</span>
-                <span className="zz-medium" style={{ fontWeight: 'var(--font-medium)', lineHeight: 1.2 }}>
-                  {cardData.moneyStat}
-                </span>
-              </div>
-            )}
-            {cardData.waterStat && (
-              <div className="flex justify-between items-center py-2">
-                <span className="zz-medium opacity-80" style={{ lineHeight: 1.2 }}>water</span>
-                <span className="zz-medium" style={{ fontWeight: 'var(--font-medium)', lineHeight: 1.2 }}>
-                  {cardData.waterStat}
-                </span>
+                </div>
               </div>
             )}
             
-            <div className="pt-6 mt-6" style={{ borderTop: '1px solid var(--zz-border)' }}>
-              <div className="zz-small opacity-60" style={{ lineHeight: 1.2 }}>tap to expand</div>
-            </div>
+            {/* Secondary Stat - Money */}
+            {cardData.moneyStat && (
+              <div>
+                <div style={{ 
+                  fontSize: '12px',
+                  fontWeight: 'var(--font-regular)', 
+                  lineHeight: 1.2,
+                  fontFamily: 'Roboto, sans-serif',
+                  color: 'var(--zz-text)',
+                  opacity: 0.6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  marginBottom: '8px'
+                }}>
+                  COST SAVINGS
+                </div>
+                <div style={{ 
+                  fontSize: '32px',
+                  fontWeight: 'var(--font-medium)',
+                  lineHeight: 1,
+                  fontFamily: 'Roboto, sans-serif',
+                  color: 'var(--zz-text)'
+                }}>
+                  {cardData.moneyStat}
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
 
-        {/* Expanded View */}
+        {/* Expanded View - Scrollable Content */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
@@ -467,6 +522,10 @@ export function DashboardCard({
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-8"
               onClick={(e) => e.stopPropagation()}
+              style={{ 
+                maxHeight: '60vh',
+                overflow: 'hidden'
+              }}
             >
               {/* Large Stats Display */}
               <div className="grid grid-cols-1 gap-6">
@@ -535,7 +594,7 @@ export function DashboardCard({
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Buttons - No Strokes */}
               {cardData.action && (
                 <div className="space-y-6 py-4">
                   <div className="text-center">
@@ -549,15 +608,13 @@ export function DashboardCard({
                           e.stopPropagation();
                           handleAction(true);
                         }}
-                        className="w-20 h-20 border-2 rounded-full flex items-center justify-center transition-all duration-300"
+                        className="w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300"
                         style={{ 
-                          borderColor: 'var(--zz-border)',
                           background: 'transparent',
                           fontSize: 'var(--text-large)',
                           lineHeight: 1
                         }}
                         whileHover={{ 
-                          borderColor: 'var(--zz-accent)',
                           background: 'var(--zz-accent)',
                           color: 'var(--zz-bg)',
                           scale: 1.05 
@@ -572,15 +629,13 @@ export function DashboardCard({
                           e.stopPropagation();
                           handleAction(false);
                         }}
-                        className="w-20 h-20 border-2 rounded-full flex items-center justify-center transition-all duration-300"
+                        className="w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300"
                         style={{ 
-                          borderColor: 'var(--zz-border)',
                           background: 'transparent',
                           fontSize: 'var(--text-large)',
                           lineHeight: 1
                         }}
                         whileHover={{ 
-                          borderColor: 'var(--zz-accent)',
                           background: 'var(--zz-accent)',
                           color: 'var(--zz-bg)',
                           scale: 1.05 
@@ -600,7 +655,7 @@ export function DashboardCard({
                 </div>
               )}
 
-              {/* Input Field */}
+              {/* Input Field - No Strokes */}
               {cardData.input && (
                 <div className="space-y-4 py-4">
                   <div className="zz-small opacity-60" style={{ 
@@ -615,14 +670,14 @@ export function DashboardCard({
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       placeholder={cardData.input.placeholder}
-                      className="flex-1 zz-input border-2 py-3 px-4"
+                      className="flex-1 py-3 px-4"
                       style={{ 
-                        borderColor: 'var(--zz-border)',
                         background: 'transparent',
                         color: 'var(--zz-text)',
                         fontSize: 'var(--text-medium)',
                         lineHeight: 1.2,
-                        borderRadius: '0'
+                        border: 'none',
+                        outline: 'none'
                       }}
                       onKeyPress={(e) => e.key === 'Enter' && handleInputSubmit()}
                       onClick={(e) => e.stopPropagation()}
@@ -632,16 +687,14 @@ export function DashboardCard({
                         e.stopPropagation();
                         handleInputSubmit();
                       }}
-                      className="px-6 py-3 border-2 transition-all duration-300"
+                      className="px-6 py-3 transition-all duration-300"
                       style={{ 
-                        borderColor: 'var(--zz-border)',
                         background: 'transparent',
                         fontSize: 'var(--text-medium)',
                         lineHeight: 1.2,
-                        borderRadius: '0'
+                        border: 'none'
                       }}
                       whileHover={{ 
-                        borderColor: 'var(--zz-accent)',
                         background: 'var(--zz-accent)',
                         color: 'var(--zz-bg)'
                       }}
@@ -653,23 +706,21 @@ export function DashboardCard({
                 </div>
               )}
 
-              {/* External Link */}
+              {/* External Link - No Strokes */}
               {cardData.externalLink && (
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleExternalLinkClick(cardData.externalLink!.url);
                   }}
-                  className="w-full p-4 border-2 transition-all duration-300"
+                  className="w-full p-4 transition-all duration-300"
                   style={{ 
-                    borderColor: 'var(--zz-border)',
                     background: 'transparent',
-                    borderRadius: '0',
                     fontSize: 'var(--text-medium)',
-                    lineHeight: 1.2
+                    lineHeight: 1.2,
+                    border: 'none'
                   }}
                   whileHover={{ 
-                    borderColor: 'var(--zz-accent)',
                     background: 'var(--zz-accent)',
                     color: 'var(--zz-bg)',
                     scale: 1.02

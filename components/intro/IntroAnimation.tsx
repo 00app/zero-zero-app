@@ -1,137 +1,220 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { GlitchIntro } from '../GlitchIntro';
-import { RSVPAnimation } from '../RSVPAnimation';
-import { WordByWordAnimation } from '../WordByWordAnimation';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const words = [
+  "what", "if", "you", "could", "make", "change?",
+  "reset.",
+  "reclaim.",
+  "reduce.",
+  "recycle.",
+  "rethink."
+];
 
 interface IntroAnimationProps {
   onComplete: () => void;
+  isDark?: boolean;
+  onThemeToggle?: () => void;
 }
 
-export function IntroAnimation({ onComplete }: IntroAnimationProps) {
-  const [currentStep, setCurrentStep] = useState(0);
-
-  // Animation sequence steps
-  const steps = [
-    { component: 'manifesto', duration: 4000 },
-    { component: 'glitch', duration: 3000 },
-    { component: 'rsvp', duration: 2500 },
-    { component: 'cta', duration: 0 }
-  ];
+export function IntroAnimation({ onComplete, isDark = true, onThemeToggle }: IntroAnimationProps) {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+  const [isGlitching, setIsGlitching] = useState(false);
 
   useEffect(() => {
-    if (currentStep < steps.length - 1) {
-      const timer = setTimeout(() => {
-        setCurrentStep(prev => prev + 1);
-      }, steps[currentStep].duration);
-      
-      return () => clearTimeout(timer);
+    if (currentWordIndex < words.length) {
+      const timeout = setTimeout(() => {
+        setCurrentWordIndex(prev => prev + 1);
+      }, 400); // 400ms per word for comfortable reading
+      return () => clearTimeout(timeout);
+    } else {
+      // RSVP complete, show button with glitch fade-in
+      setTimeout(() => {
+        setIsComplete(true);
+        setShowButton(true);
+        setIsGlitching(true); // start glitch on fade-in
+        setTimeout(() => setIsGlitching(false), 1500); // glitch ends after 1.5s
+      }, 800);
     }
-  }, [currentStep, steps]);
+  }, [currentWordIndex]);
 
-  const handleComplete = () => {
+  const handleRestart = () => {
     onComplete();
   };
 
   return (
-    <div className="zz-screen" style={{ 
-      background: 'var(--zz-bg)', 
-      color: 'var(--zz-text)',
-      fontFamily: 'Roboto, sans-serif',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Manifesto Animation */}
-      {currentStep === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full h-full flex items-center justify-center"
-        >
-          <WordByWordAnimation
-            text="save money reduce carbon improve wellbeing"
-            onComplete={() => {}}
-          />
-        </motion.div>
-      )}
-
-      {/* Glitch Animation */}
-      {currentStep === 1 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full h-full flex items-center justify-center"
-        >
-          <GlitchIntro onComplete={() => {}} />
-        </motion.div>
-      )}
-
-      {/* RSVP Animation */}
-      {currentStep === 2 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full h-full flex items-center justify-center"
-        >
-          <RSVPAnimation 
-            text="zero zero"
-            onComplete={() => {}}
-          />
-        </motion.div>
-      )}
-
-      {/* CTA Button */}
-      {currentStep === 3 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full h-full flex flex-col items-center justify-center gap-8"
-        >
-          <div className="text-center mb-8">
-            <div className="zz-large mb-4" style={{ lineHeight: 1.2 }}>
-              welcome to zero zero
-            </div>
-            <div className="zz-medium opacity-70" style={{ lineHeight: 1.4 }}>
-              the sustainability app that helps you save money,<br />
-              reduce your carbon footprint, and improve wellbeing
-            </div>
-          </div>
-          
-          <motion.button
-            onClick={handleComplete}
-            className="zz-cta-button"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+    <div 
+      className="zz-screen" 
+      style={{ padding: '0 40px', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}
+    >
+      {/* Theme Toggle - positioned like other screens */}
+      {onThemeToggle && (
+        <div className="absolute top-6 right-6">
+          <button
+            onClick={onThemeToggle}
+            className="zz-circle-button"
             style={{ 
-              background: 'var(--zz-accent)',
-              color: 'var(--zz-bg)',
-              border: 'none',
-              borderRadius: '50%',
-              padding: 'var(--spacing-md)',
-              width: '120px',
-              height: '120px',
-              fontSize: 'var(--text-medium)',
-              fontWeight: 'var(--font-regular)',
-              cursor: 'pointer',
-              transition: 'all var(--duration-normal) var(--ease-out)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              lineHeight: 1.2
+              width: '40px', 
+              height: '40px',
+              fontSize: '16px'
             }}
           >
-            start
-          </motion.button>
-        </motion.div>
+            {isDark ? '☀' : '●'}
+          </button>
+        </div>
       )}
+      <div 
+        className="w-full h-full flex flex-col items-center justify-center"
+        style={{ maxWidth: '100%', textAlign: 'center' }}
+      >
+        {/* RSVP Word Display */}
+        <AnimatePresence mode="wait">
+          {!isComplete && (
+            <motion.div
+              key="rsvp-display"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-center"
+              style={{
+                width: '100%',
+                fontSize: 'clamp(2.5rem, 8vw, 6rem)', // responsive big text
+                fontWeight: '700',
+                lineHeight: 1.1,
+                fontFamily: 'Roboto, sans-serif',
+                color: 'var(--zz-text)',
+                userSelect: 'none',
+                minHeight: '10vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 40px',
+                boxSizing: 'border-box',
+              }}
+            >
+              <motion.span
+                key={currentWordIndex}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.2 }}
+                transition={{ 
+                  duration: 0.3,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+              >
+                {words[currentWordIndex] || ""}
+              </motion.span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Glitchy Restart Button */}
+        <AnimatePresence>
+          {showButton && (
+            <motion.div
+              key="restart-button"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ 
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1]
+              }}
+              className="flex items-center justify-center mt-12"
+              style={{ width: '6vw', minWidth: '60px', minHeight: '60px' }}
+            >
+              <button
+                onClick={handleRestart}
+                className="rounded-full border-2 flex items-center justify-center relative overflow-hidden"
+                style={{
+                  background: 'transparent',
+                  borderColor: 'var(--zz-border)',
+                  color: 'var(--zz-text)',
+                  fontWeight: 700,
+                  fontFamily: 'Roboto, sans-serif',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  width: '100%',
+                  height: '100%',
+                  fontSize: 'clamp(1rem, 0.7vw, 1.2rem)',
+                  textTransform: 'lowercase',
+                  userSelect: 'none',
+                  padding: 0,
+                  margin: 0
+                }}
+                aria-label="restart onboarding"
+              >
+                <motion.div
+                  className="relative"
+                  animate={isGlitching ? {
+                    x: [0, -1, 1, -1, 0],
+                    y: [0, 1, -1, 1, 0]
+                  } : { x: 0, y: 0 }}
+                  transition={{
+                    duration: 0.2,
+                    repeat: isGlitching ? Infinity : 0,
+                    ease: "linear"
+                  }}
+                >
+                  restart.
+                  
+                  {/* Glitch Layers */}
+                  {isGlitching && (
+                    <>
+                      <motion.div
+                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                        style={{ 
+                          color: 'var(--zz-grey)',
+                          clipPath: 'inset(40% 0 50% 0)',
+                          fontSize: 'inherit',
+                          fontWeight: 700,
+                          userSelect: 'none',
+                        }}
+                        animate={{
+                          x: [-2, 2, -2],
+                          opacity: [0.8, 0.3, 0.7]
+                        }}
+                        transition={{
+                          duration: 0.15,
+                          repeat: Infinity,
+                          ease: "linear"
+                        }}
+                      >
+                        restart.
+                      </motion.div>
+                      
+                      <motion.div
+                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                        style={{ 
+                          color: 'var(--zz-grey)',
+                          clipPath: 'inset(20% 0 60% 0)',
+                          fontSize: 'inherit',
+                          fontWeight: 700,
+                          userSelect: 'none',
+                        }}
+                        animate={{
+                          x: [2, -2, 2],
+                          opacity: [0.6, 0.9, 0.4]
+                        }}
+                        transition={{
+                          duration: 0.2,
+                          repeat: Infinity,
+                          delay: 0.1,
+                          ease: "linear"
+                        }}
+                      >
+                        restart.
+                      </motion.div>
+                    </>
+                  )}
+                </motion.div>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

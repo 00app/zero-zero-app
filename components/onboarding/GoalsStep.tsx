@@ -1,13 +1,9 @@
 
 import React, { useState } from 'react';
-import { OnboardingData } from './OnboardingFlow';
 
 interface GoalsStepProps {
-  data: Partial<OnboardingData>;
-  onNext: (data: Partial<OnboardingData>) => void;
-  onBack: () => void;
-  currentStep: number;
-  totalSteps: number;
+  onComplete: (value: string[]) => void;
+  initialValue?: string[];
 }
 
 const availableGoals = [
@@ -25,8 +21,8 @@ const availableGoals = [
   'use public transport'
 ];
 
-export function GoalsStep({ data, onNext, onBack }: GoalsStepProps) {
-  const [goals, setGoals] = useState<string[]>(data.goals || []);
+export function GoalsStep({ onComplete, initialValue }: GoalsStepProps) {
+  const [goals, setGoals] = useState<string[]>(initialValue || []);
 
   const toggleGoal = (goal: string) => {
     const newGoals = goals.includes(goal)
@@ -37,51 +33,99 @@ export function GoalsStep({ data, onNext, onBack }: GoalsStepProps) {
   };
 
   const handleNext = () => {
-    onNext({ goals });
+    onComplete(goals);
   };
 
   return (
     <div className="space-y-12">
-      <div className="space-y-6">
-        <div>
-          <button onClick={onBack} className="zz-circle-button">
-            ←
-          </button>
-        </div>
-        
+      <div className="space-y-6 text-left">
         <div className="space-y-4">
-          <h1 className="zz-h1">what are your goals?</h1>
+          <div 
+            style={{ 
+              fontSize: '32px',
+              fontWeight: 'var(--font-regular)', 
+              lineHeight: 1.2,
+              fontFamily: 'Roboto, sans-serif',
+              color: 'var(--zz-text)',
+              textTransform: 'lowercase'
+            }}
+          >
+            what are your goals?
+          </div>
+          <div 
+            style={{ 
+              fontSize: '16px',
+              fontWeight: 'var(--font-regular)', 
+              lineHeight: 1.4,
+              fontFamily: 'Roboto, sans-serif',
+              color: 'var(--zz-text)',
+              opacity: 0.6,
+              textTransform: 'lowercase'
+            }}
+          >
+            select all that apply
+          </div>
         </div>
       </div>
       
       <div className="space-y-8">
-        <div className="zz-pill-container max-h-[400px] overflow-y-auto py-2.5">
+        <div className="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto py-2">
           {availableGoals.map((goal) => (
             <button
               key={goal}
               onClick={() => toggleGoal(goal)}
-              className={`zz-pill ${
-                goals.includes(goal) ? 'selected' : ''
-              }`}
+              className="py-3 px-4 border-2 text-left transition-all duration-300"
+              style={{
+                borderColor: goals.includes(goal) ? 'var(--zz-accent)' : 'var(--zz-border)',
+                background: goals.includes(goal) ? 'var(--zz-accent)' : 'transparent',
+                color: goals.includes(goal) ? 'var(--zz-bg)' : 'var(--zz-text)',
+                fontSize: '14px',
+                fontWeight: 'var(--font-regular)',
+                fontFamily: 'Roboto, sans-serif',
+                lineHeight: 1.3,
+                textTransform: 'lowercase',
+                borderRadius: '0'
+              }}
             >
-              {goal}
+              <div className="flex items-center justify-between">
+                <span>{goal}</span>
+                <span style={{ fontSize: '12px' }}>
+                  {goals.includes(goal) ? '✓' : '+'}
+                </span>
+              </div>
             </button>
           ))}
         </div>
         
-        <div className="flex items-center justify-between">
-          <div className="opacity-60">
-            <p className="zz-p1">
+        <div className="flex items-center justify-between pt-4">
+          <div style={{ opacity: 0.6 }}>
+            <div 
+              style={{ 
+                fontSize: '14px',
+                fontWeight: 'var(--font-regular)', 
+                lineHeight: 1.3,
+                fontFamily: 'Roboto, sans-serif',
+                color: 'var(--zz-text)',
+                textTransform: 'lowercase'
+              }}
+            >
               {goals.length > 0 && `${goals.length} goal${goals.length !== 1 ? 's' : ''} selected`}
-            </p>
+            </div>
           </div>
           
           <button 
             onClick={handleNext} 
             disabled={goals.length === 0}
-            className={`zz-circle-button ${
-              goals.length === 0 ? 'opacity-30 cursor-not-allowed' : ''
-            }`}
+            className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+            style={{
+              borderColor: goals.length > 0 ? 'var(--zz-accent)' : 'var(--zz-border)',
+              background: 'transparent',
+              color: goals.length > 0 ? 'var(--zz-text)' : 'var(--zz-border)',
+              fontSize: '20px',
+              lineHeight: 1,
+              cursor: goals.length > 0 ? 'pointer' : 'not-allowed',
+              opacity: goals.length > 0 ? 1 : 0.3
+            }}
           >
             →
           </button>

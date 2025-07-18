@@ -1,21 +1,44 @@
-
-import React, { useState } from 'react';
-import { OnboardingData } from './OnboardingFlow';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { GlitchText } from '../effects/GlitchText';
+import { useGlitchAnimation } from '../hooks/useGlitchAnimation';
 
 interface RoomsPeopleStepProps {
-  data: Partial<OnboardingData>;
-  onNext: (data: Partial<OnboardingData>) => void;
-  onBack: () => void;
-  currentStep: number;
-  totalSteps: number;
+  onComplete: (data: { rooms: number; people: number }) => void;
+  initialValue?: { rooms: number; people: number };
 }
 
-export function RoomsPeopleStep({ data, onNext, onBack }: RoomsPeopleStepProps) {
-  const [rooms, setRooms] = useState(data.rooms || 1);
-  const [people, setPeople] = useState(data.people || 1);
+export function RoomsPeopleStep({ onComplete, initialValue }: RoomsPeopleStepProps) {
+  const [rooms, setRooms] = useState(initialValue?.rooms || 1);
+  const [people, setPeople] = useState(initialValue?.people || 1);
+  const [questionText, setQuestionText] = useState('');
+  const [showControls, setShowControls] = useState(false);
+  const [showContinue, setShowContinue] = useState(false);
+  const isGlitching = useGlitchAnimation(1500);
 
-  const handleNext = () => {
-    onNext({ rooms, people });
+  const fullQuestion = "how many rooms and people?";
+  const typingSpeed = 60;
+
+  useEffect(() => {
+    let currentChar = 0;
+    const typeInterval = setInterval(() => {
+      if (currentChar <= fullQuestion.length) {
+        setQuestionText(fullQuestion.slice(0, currentChar));
+        currentChar++;
+      } else {
+        clearInterval(typeInterval);
+        setTimeout(() => {
+          setShowControls(true);
+          setShowContinue(true);
+        }, 300);
+      }
+    }, typingSpeed);
+
+    return () => clearInterval(typeInterval);
+  }, []);
+
+  const handleComplete = () => {
+    onComplete({ rooms, people });
   };
 
   const updateRooms = (delta: number) => {
@@ -29,79 +52,174 @@ export function RoomsPeopleStep({ data, onNext, onBack }: RoomsPeopleStepProps) 
   };
 
   return (
-    <div className="space-y-12">
-      <div className="space-y-6">
-        <div>
-          <button onClick={onBack} className="zz-circle-button">
-            ←
-          </button>
-        </div>
-        
-        <div className="space-y-4">
-          <h1 className="zz-h1">how many rooms & people?</h1>
+    <div className="space-y-8">
+      {/* Question */}
+      <div className="text-left">
+        <div 
+          className="zz-large mb-8"
+          style={{ 
+            fontWeight: 'var(--font-regular)',
+            lineHeight: 1.2,
+            minHeight: '29px',
+            textAlign: 'left'
+          }}
+        >
+          {questionText}
+          {questionText.length < fullQuestion.length && (
+            <motion.span
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="inline-block w-1 h-6 ml-1"
+              style={{ background: 'var(--zz-text)' }}
+            />
+          )}
         </div>
       </div>
-      
-      <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <p className="zz-p1 opacity-80">rooms</p>
-            <div className="flex items-center justify-center space-x-6">
-              <button
-                onClick={() => updateRooms(-1)}
-                className="zz-circle-button"
-                disabled={rooms <= 1}
+
+      {/* Controls */}
+      {showControls && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-8"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Rooms */}
+            <div className="space-y-4">
+              <div 
+                className="zz-medium text-left opacity-70"
+                style={{ lineHeight: 1.4 }}
               >
-                −
-              </button>
-              <div className="zz-h2 min-w-[80px] text-center">{rooms}</div>
-              <button
-                onClick={() => updateRooms(1)}
-                className="zz-circle-button"
-                disabled={rooms >= 20}
+                rooms
+              </div>
+              <div className="flex items-center justify-start space-x-6">
+                <button
+                  onClick={() => updateRooms(-1)}
+                  className="zz-circle-button"
+                  disabled={rooms <= 1}
+                  style={{ 
+                    width: '48px', 
+                    height: '48px',
+                    fontSize: '20px'
+                  }}
+                >
+                  −
+                </button>
+                <div 
+                  className="zz-large min-w-[80px] text-center"
+                  style={{ 
+                    fontSize: '48px',
+                    fontWeight: 'var(--font-light)',
+                    lineHeight: 1
+                  }}
+                >
+                  {rooms}
+                </div>
+                <button
+                  onClick={() => updateRooms(1)}
+                  className="zz-circle-button"
+                  disabled={rooms >= 20}
+                  style={{ 
+                    width: '48px', 
+                    height: '48px',
+                    fontSize: '20px'
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* People */}
+            <div className="space-y-4">
+              <div 
+                className="zz-medium text-left opacity-70"
+                style={{ lineHeight: 1.4 }}
               >
-                +
-              </button>
+                people
+              </div>
+              <div className="flex items-center justify-start space-x-6">
+                <button
+                  onClick={() => updatePeople(-1)}
+                  className="zz-circle-button"
+                  disabled={people <= 1}
+                  style={{ 
+                    width: '48px', 
+                    height: '48px',
+                    fontSize: '20px'
+                  }}
+                >
+                  −
+                </button>
+                <div 
+                  className="zz-large min-w-[80px] text-center"
+                  style={{ 
+                    fontSize: '48px',
+                    fontWeight: 'var(--font-light)',
+                    lineHeight: 1
+                  }}
+                >
+                  {people}
+                </div>
+                <button
+                  onClick={() => updatePeople(1)}
+                  className="zz-circle-button"
+                  disabled={people >= 20}
+                  style={{ 
+                    width: '48px', 
+                    height: '48px',
+                    fontSize: '20px'
+                  }}
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <p className="zz-p1 opacity-80">people</p>
-            <div className="flex items-center justify-center space-x-6">
-              <button
-                onClick={() => updatePeople(-1)}
-                className="zz-circle-button"
-                disabled={people <= 1}
-              >
-                −
-              </button>
-              <div className="zz-h2 min-w-[80px] text-center">{people}</div>
-              <button
-                onClick={() => updatePeople(1)}
-                className="zz-circle-button"
-                disabled={people >= 20}
-              >
-                +
-              </button>
-            </div>
+          {/* Summary */}
+          <div className="text-center">
+
           </div>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="opacity-60">
-            <p className="zz-p1">
-              {rooms} room{rooms !== 1 ? 's' : ''}, {people} person{people !== 1 ? 's' : ''}
-            </p>
-          </div>
-          
-          <button 
-            onClick={handleNext} 
-            className="zz-circle-button"
-          >
-            →
-          </button>
-        </div>
-      </div>
+
+          {/* Continue Button */}
+          {showContinue && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="flex justify-start"
+            >
+              <button
+                onClick={handleComplete}
+                className="px-8 py-4 border-2 bg-transparent transition-all duration-300"
+                style={{
+                  borderColor: 'var(--zz-accent)',
+                  color: 'var(--zz-text)',
+                  fontSize: 'var(--text-medium)',
+                  fontWeight: 'var(--font-regular)',
+                  fontFamily: 'Roboto, sans-serif',
+                  borderRadius: '0'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--zz-accent)';
+                  e.currentTarget.style.color = 'var(--zz-bg)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = 'var(--zz-text)';
+                }}
+                aria-label="Continue to next step"
+              >
+                <GlitchText isGlitching={isGlitching}>
+                  continue →
+                </GlitchText>
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 }
