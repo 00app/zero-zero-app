@@ -6,7 +6,7 @@
   "description": "Zero Zero - A sustainability app that helps users save money, reduce their carbon footprint, and improve well-being through real-time data and AI-powered insights",
   "engines": {
     "node": "16.x",
-    "npm": "10.8.2"
+    "npm": "8.1.0"
   },
   "scripts": {
     "dev": "vite",
@@ -24,13 +24,15 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
-    "supabase-js": "^2.19.0",
     "axios": "^0.26.1",
     "tailwindcss": "^3.3.6",
     "vite": "^4.2.0",
     "vite-plugin-svgr": "^2.3.0",
     "vite-plugin-react": "^4.2.1",
-    "sass": "^1.49.9"
+    "sass": "^1.49.9",
+    "supabase-js": "^2.19.0",
+    "google-maps-react": "^2.0.6",
+    "twilio": "^4.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
@@ -72,5 +74,51 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "environment": {
+    "region": {
+      "aus": {
+        "key": "VITE_REGION_AUS_API"
+      },
+      "uk": {
+        "key": "VITE_REGION_UK_API"
+      },
+      "us": {
+        "key": "VITE_REGION_USA_API"
+      },
+      "eu": {
+        "key": "VITE_REGION_EU_API"
+      },
+      "ghana": {
+        "key": "VITE_REGION_GHANA_API"
+      }
+    },
+    "country": {
+      "aus": {
+        "name": "Australia",
+        "currency": "AUD",
+        "timezone": "Australia/Sydney"
+      },
+      "uk": {
+        "name": "United Kingdom",
+        "currency": "GBP",
+        "timezone": "Europe/London"
+      },
+      "us": {
+        "name": "United States",
+        "currency": "USD",
+        "timezone": "America/New_York"
+      },
+      "eu": {
+        "name": "European Union",
+        "currency": "EUR",
+        "timezone": "Europe/Brussels"
+      },
+      "ghana": {
+        "name": "Ghana",
+        "currency": "GHS",
+        "timezone": "Africa/Accra"
+      }
+    }
   }
 }
