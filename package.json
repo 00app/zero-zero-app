@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Zero Zero - A sustainability app that helps users save money, reduce their carbon footprint, and improve well-being through real-time data and AI-powered insights",
+  "description": "Zero Zero – A sustainability app helping users save money, reduce carbon footprint, and improve well-being using real-time AI insights.",
   "engines": {
     "node": "18.20.8",
     "npm": "10.8.2"
@@ -13,11 +13,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist node_modules/.cache",
-    "clean:cache": "npm cache clean --force && rm -rf node_modules/.cache && rm -rf dist",
-    "validate": "node validate-env.js",
-    "test-env": "node validate-env.js",
-    "prebuild": "npm run clean",
-    "postbuild": "node verify-build.js"
+    "clean:cache": "npm cache clean --force && rm -rf node_modules/.cache && rm -rf dist"
   },
   "dependencies": {
     "@supabase/gotrue-js": "^2.66.0",
