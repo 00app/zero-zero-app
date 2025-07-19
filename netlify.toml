@@ -5,7 +5,7 @@
   CI = "true"
 
 [build]
-  command = "npm cache clean --force && npm ci && npm run build"
+  command = "npm ci && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
@@ -62,21 +62,21 @@
 
 # Environment-specific settings
 [context.production]
-  command = "npm cache clean --force && npm ci && npm run build"
+  command = "npm ci && npm run build"
   
 [context.production.environment]
   NODE_ENV = "production"
   GENERATE_SOURCEMAP = "false"
 
 [context.deploy-preview]
-  command = "npm cache clean --force && npm ci && npm run build"
+  command = "npm ci && npm run build"
   
 [context.deploy-preview.environment]
   NODE_ENV = "production"
   GENERATE_SOURCEMAP = "true"
 
 [context.branch-deploy]
-  command = "npm cache clean --force && npm ci && npm run build"
+  command = "npm ci && npm run build"
   
 [context.branch-deploy.environment]
   NODE_ENV = "production"
