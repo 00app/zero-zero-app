@@ -1,12 +1,7 @@
+
 [build]
-command = "npm run build"
-publish = "dist"  # Adjust this to the output directory of your app
-functions = "netlify/functions"  # Adjust if you're using Netlify functions
+  command = "npm run build"
+  publish = "dist"
 
 [build.environment]
-NODE_VERSION = "18.x"  # Set this to the Node version compatible with your app
-
-[[redirects]]
-from = "/old-path"
-to = "/new-path"
-status = 301
+  NODE_VERSION = "16.x"

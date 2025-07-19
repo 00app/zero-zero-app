@@ -90,14 +90,5 @@
       "currency": "AUD",
       "ecoTips": "Use solar energy, recycle waste materials"
     }
-  },
-  "netlify": {
-    "build": {
-      "environment": {
-        "NODE_VERSION": "16.x"
-      },
-      "publish": "dist", 
-      "command": "npm run build"
-    }
   }
 }
