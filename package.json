@@ -1,34 +1,74 @@
 {
   "name": "zero-zero-app",
+  "private": true,
   "version": "1.0.0",
-  "description": "Zero Zero App - Carbon footprint and savings tracker",
-  "main": "index.js",
+  "type": "module",
+  "description": "Zero Zero - A sustainability app that helps users save money, reduce their carbon footprint, and improve well-being through real-time data and AI-powered insights",
+  "engines": {
+    "node": "16.x",
+    "npm": "10.8.2"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "clean": "rm -rf dist node_modules/.cache",
+    "clean:cache": "npm cache clean --force && rm -rf node_modules/.cache && rm -rf dist",
+    "validate": "node validate-env.js",
+    "test-env": "node validate-env.js",
+    "prebuild": "npm run clean",
+    "postbuild": "node verify-build.js"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1",
     "react-router-dom": "^6.3.0",
-    "supabase-js": "^2.0.1",
+    "supabase-js": "^2.39.0",
     "axios": "^0.26.1",
-    "tailwindcss": "^3.0.23",
-    "vite": "^2.9.7",
+    "tailwindcss": "^3.3.6",
+    "vite": "^5.0.8",
     "sass": "^1.49.9"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^1.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "vite-plugin-svgr": "^2.3.0",
-    "postcss": "^8.4.9",
-    "autoprefixer": "^10.4.6"
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "typescript": "^5.2.2"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zerozero/zero-zero-app.git"
+  },
+  "keywords": [
+    "sustainability",
+    "carbon-footprint",
+    "environment",
+    "react",
+    "typescript",
+    "vite",
+    "netlify"
   ],
-  "license": "MIT"
+  "author": "Zero Zero Team",
+  "license": "MIT",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
