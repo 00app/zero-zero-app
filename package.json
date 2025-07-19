@@ -24,10 +24,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
-    "supabase-js": "^2.39.0",
+    "supabase-js": "^2.19.0",
     "axios": "^0.26.1",
     "tailwindcss": "^3.3.6",
-    "vite": "^5.0.8",
+    "vite": "^4.2.0",
+    "vite-plugin-svgr": "^2.3.0",
+    "vite-plugin-react": "^4.2.1",
     "sass": "^1.49.9"
   },
   "devDependencies": {
@@ -46,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zerozero/zero-zero-app.git"
+    "url": "https://github.com/00app/zero-zero-app.git"
   },
   "keywords": [
     "sustainability",
@@ -70,25 +72,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "countryRegion": {
-    "United Kingdom": {
-      "region": "UK",
-      "carbonEmission": "2025-07-16",
-      "currency": "GBP",
-      "ecoTips": "Use public transport, switch off lights when not in use"
-    },
-    "Europe": {
-      "region": "Europe",
-      "carbonEmission": "2025-07-16",
-      "currency": "EUR",
-      "ecoTips": "Consider walking or cycling, reduce single-use plastics"
-    },
-    "Australia": {
-      "region": "AUS",
-      "carbonEmission": "2025-07-16",
-      "currency": "AUD",
-      "ecoTips": "Use solar energy, recycle waste materials"
-    }
   }
 }
