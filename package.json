@@ -70,5 +70,25 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "countryRegion": {
+    "United Kingdom": {
+      "region": "UK",
+      "carbonEmission": "2025-07-16",
+      "currency": "GBP",
+      "ecoTips": "Use public transport, switch off lights when not in use"
+    },
+    "Europe": {
+      "region": "Europe",
+      "carbonEmission": "2025-07-16",
+      "currency": "EUR",
+      "ecoTips": "Consider walking or cycling, reduce single-use plastics"
+    },
+    "Australia": {
+      "region": "AUS",
+      "carbonEmission": "2025-07-16",
+      "currency": "AUD",
+      "ecoTips": "Use solar energy, recycle waste materials"
+    }
   }
 }
