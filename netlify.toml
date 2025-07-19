@@ -5,7 +5,7 @@
   CI = "true"
 
 [build]
-  command = "npm ci && npm run build"
+  command = "npm ci && npx vite build"  # Updated command
   publish = "dist"
   functions = "netlify/functions"
 
@@ -61,29 +61,4 @@
   status = 200
 
 # Environment-specific settings
-[context.production]
-  command = "npm ci && npm run build"
-  
-[context.production.environment]
-  NODE_ENV = "production"
-  GENERATE_SOURCEMAP = "false"
-
-[context.deploy-preview]
-  command = "npm ci && npm run build"
-  
-[context.deploy-preview.environment]
-  NODE_ENV = "production"
-  GENERATE_SOURCEMAP = "true"
-
-[context.branch-deploy]
-  command = "npm ci && npm run build"
-  
-[context.branch-deploy.environment]
-  NODE_ENV = "production"
-  GENERATE_SOURCEMAP = "true"
-
-# Functions configuration
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-  included_files = ["netlify/functions/**"]
+[context.]()
