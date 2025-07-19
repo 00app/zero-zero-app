@@ -1,124 +1,16 @@
 {
   "name": "zero-zero-app",
-  "private": true,
   "version": "1.0.0",
-  "type": "module",
-  "description": "Zero Zero - A sustainability app that helps users save money, reduce their carbon footprint, and improve well-being through real-time data and AI-powered insights",
-  "engines": {
-    "node": "16.x",
-    "npm": "8.1.0"
+  "private": true,
+  "dependencies": {
+    "@react-google-maps/api": "^2.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "clean": "rm -rf dist node_modules/.cache",
-    "clean:cache": "npm cache clean --force && rm -rf node_modules/.cache && rm -rf dist",
-    "validate": "node validate-env.js",
-    "test-env": "node validate-env.js",
-    "prebuild": "npm run clean",
-    "postbuild": "node verify-build.js"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0",
-    "axios": "^0.26.1",
-    "tailwindcss": "^3.3.6",
-    "vite": "^4.2.0",
-    "vite-plugin-svgr": "^2.3.0",
-    "vite-plugin-react": "^4.2.1",
-    "sass": "^1.49.9",
-    "supabase-js": "^2.19.0",
-    "google-maps-react": "^2.0.6",
-    "twilio": "^4.0.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite-plugin-svgr": "^2.3.0",
-    "postcss": "^8.4.32",
-    "autoprefixer": "^10.4.16",
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "typescript": "^5.2.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/00app/zero-zero-app.git"
-  },
-  "keywords": [
-    "sustainability",
-    "carbon-footprint",
-    "environment",
-    "react",
-    "typescript",
-    "vite",
-    "netlify"
-  ],
-  "author": "Zero Zero Team",
-  "license": "MIT",
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "environment": {
-    "region": {
-      "aus": {
-        "key": "VITE_REGION_AUS_API"
-      },
-      "uk": {
-        "key": "VITE_REGION_UK_API"
-      },
-      "us": {
-        "key": "VITE_REGION_USA_API"
-      },
-      "eu": {
-        "key": "VITE_REGION_EU_API"
-      },
-      "ghana": {
-        "key": "VITE_REGION_GHANA_API"
-      }
-    },
-    "country": {
-      "aus": {
-        "name": "Australia",
-        "currency": "AUD",
-        "timezone": "Australia/Sydney"
-      },
-      "uk": {
-        "name": "United Kingdom",
-        "currency": "GBP",
-        "timezone": "Europe/London"
-      },
-      "us": {
-        "name": "United States",
-        "currency": "USD",
-        "timezone": "America/New_York"
-      },
-      "eu": {
-        "name": "European Union",
-        "currency": "EUR",
-        "timezone": "Europe/Brussels"
-      },
-      "ghana": {
-        "name": "Ghana",
-        "currency": "GHS",
-        "timezone": "Africa/Accra"
-      }
-    }
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   }
 }
