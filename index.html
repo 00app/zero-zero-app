@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Zero Zero - A sustainability app that helps users save money, reduce their carbon footprint, and improve well-being through real-time data and AI-powered insights." />
+  <meta name="keywords" content="sustainability, carbon footprint, environmental impact, money saving, eco-friendly, climate change, zero waste" />
+  <meta name="author" content="Zero Zero Team" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zero-zero.netlify.app/" />
+  <meta property="og:title" content="Zero Zero - Sustainability Made Simple" />
+  <meta property="og:description" content="Save money, reduce your carbon footprint, and improve well-being through real-time data and AI-powered insights." />
+  <meta property="og:image" content="/favicon.svg" />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://zero-zero.netlify.app/" />
+  <meta property="twitter:title" content="Zero Zero - Sustainability Made Simple" />
+  <meta property="twitter:description" content="Save money, reduce your carbon footprint, and improve well-being through real-time data and AI-powered insights." />
+  <meta property="twitter:image" content="/favicon.svg" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.openai.com" />
+  <link rel="preconnect" href="https://maps.googleapis.com" />
+  
+  <!-- Security headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  
+  <!-- Apple specific -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Zero Zero" />
+  
+  <title>Zero Zero - Sustainability Made Simple</title>
+  
+  <!-- Inline critical CSS for brutalist design -->
+  <style>
+    /* Critical CSS for initial load */
+    :root {
+      --zz-black: #000000;
+      --zz-white: #ffffff;
+      --zz-grey: #242424;
+      --zz-bg: var(--zz-black);
+      --zz-text: var(--zz-white);
+      --text-medium: 16px;
+      --font-regular: 400;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      min-height: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--zz-bg);
+      color: var(--zz-text);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    #root {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Loading state */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-size: var(--text-medium);
+      font-weight: var(--font-regular);
+      color: var(--zz-text);
+      opacity: 0.8;
+    }
+    
+    /* Hide loading once React loads */
+    .loaded .loading {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="loading">
+      initializing zero zero...
+    </div>
+  </div>
+  
+  <!-- Main application script -->
+  <script type="module" src="/src/main.tsx"></script>
+  
+  <!-- Mark as loaded once script runs -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.body.classList.add('loaded');
+    });
+  </script>
+  
+  <!-- Service Worker for PWA (optional) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').catch(function(error) {
+          console.log('ServiceWorker registration failed: ', error);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
