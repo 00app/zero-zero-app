@@ -10,14 +10,13 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npx tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "clean": "rm -rf dist node_modules/.cache",
-    "clean:cache": "npm cache clean --force && rm -rf node_modules/.cache && rm -rf dist",
+    "clean": "rm -rf node_modules/.cache",
+    "clean:cache": "npm cache clean --force && rm -rf node_modules/.cache",
     "validate": "node validate-env.js",
     "test-env": "node validate-env.js",
-    "prebuild": "npm run clean",
     "postbuild": "node verify-build.js"
   },
   "dependencies": {
@@ -40,7 +39,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.2.2",
+    "typescript": "^5.8.3",
     "vite": "^7.0.5"
   },
   "repository": {
