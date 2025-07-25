@@ -1,51 +1,17 @@
+
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "moduleResolution": "Node",
+    "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/utils/*": ["./utils/*"],
-      "@/services/*": ["./services/*"]
-    }
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "noEmit": true
   },
-  "include": [
-    "*.tsx",
-    "*.ts",
-    "components/**/*.tsx",
-    "components/**/*.ts",
-    "utils/**/*.tsx",
-    "utils/**/*.ts",
-    "services/**/*.ts",
-    "data/**/*.json",
-    "imports/**/*.tsx",
-    "imports/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src",
-    "supabase/functions",
-    "public",
-    "verify-build.js",
-    "postcss.config.js",
-    "tailwind.config.js"
-  ]
+  "include": ["src"]
 }
