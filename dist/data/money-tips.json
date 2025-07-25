@@ -1,0 +1,87 @@
+{
+  "source": "zero zero clean living tips",
+  "version": "1.0",
+  "currency": "GBP",
+  "tips": [
+    {
+      "id": 1,
+      "title": "switch to renewable energy supplier",
+      "description": "cut your monthly bills and carbon footprint by switching to 100% renewable electricity providers like octopus energy or ecotricity.",
+      "estimated_savings": 120,
+      "category": "energy",
+      "ai_expand": true
+    },
+    {
+      "id": 2,
+      "title": "cut food waste with ai meal planning",
+      "description": "use ai to plan your meals based on what's already in your fridge. save money and reduce food waste every week.",
+      "estimated_savings": 300,
+      "category": "food",
+      "ai_expand": true
+    },
+    {
+      "id": 3,
+      "title": "refill, don't rebuy",
+      "description": "switch to refillable cleaning and personal care products from local eco stores. you'll cut plastic and save over time.",
+      "estimated_savings": 75,
+      "category": "home",
+      "ai_expand": false
+    },
+    {
+      "id": 4,
+      "title": "ditch the tumble dryer",
+      "description": "air-drying clothes saves money and extends their lifespan. use indoor racks or outdoor lines where possible.",
+      "estimated_savings": 60,
+      "category": "energy",
+      "ai_expand": false
+    },
+    {
+      "id": 5,
+      "title": "ai personalised local offers",
+      "description": "zai finds deals and cashback offers on eco food, travel, and clothes near you — tailored to your profile.",
+      "estimated_savings": 150,
+      "category": "ai",
+      "ai_expand": true
+    },
+    {
+      "id": 6,
+      "title": "eat more plants",
+      "description": "plant-based diets cost less and reduce emissions. cut meat and dairy by half and save money each week.",
+      "estimated_savings": 400,
+      "category": "diet",
+      "ai_expand": true
+    },
+    {
+      "id": 7,
+      "title": "walk or cycle short trips",
+      "description": "replace short car journeys with walking or cycling. better for you, the planet, and your fuel bills.",
+      "estimated_savings": 200,
+      "category": "transport",
+      "ai_expand": false
+    },
+    {
+      "id": 8,
+      "title": "switch to a green bank",
+      "description": "move your money to a bank that doesn't invest in fossil fuels. it's free and sends a powerful message.",
+      "estimated_savings": 0,
+      "category": "finance",
+      "ai_expand": true
+    },
+    {
+      "id": 9,
+      "title": "buy preloved instead of new",
+      "description": "from tech to fashion, preloved saves money and cuts waste. use local apps or zai's suggestions.",
+      "estimated_savings": 250,
+      "category": "shopping",
+      "ai_expand": true
+    },
+    {
+      "id": 10,
+      "title": "track your spending & co₂ in one",
+      "description": "connect your bank with zai to track your carbon and financial impact — spot where to save instantly.",
+      "estimated_savings": 500,
+      "category": "finance",
+      "ai_expand": true
+    }
+  ]
+}

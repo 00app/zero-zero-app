@@ -249,7 +249,18 @@ export function DashboardCard({ category, cardIndex, userData, isDark = true, is
       };
 
       console.log('saving action:', actionData);
-      const result = await logCardInteraction(actionData);
+      // ensure 'actionTaken' is typed to the allowed literal union
+      const actionTaken:
+        | 'accept'
+        | 'reject'
+        | 'input_submitted'
+        | 'expanded'
+        | 'link_clicked'
+        = actionData.action_taken as any;  // or derive so TS infers union
+      const result = await logCardInteraction({
+        ...actionData,
+        action_taken: actionTaken,
+      });
       
       if (result) {
         console.log('action saved successfully:', result);

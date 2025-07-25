@@ -473,6 +473,13 @@ export async function checkApiHealth() {
     return result;
   } catch (error) {
     console.error('API health check failed:', error);
-    return { status: 'error', message: error.message };
+    // TS treats catch‑param as `unknown` by default
+    const message = error instanceof Error
+      ? error.message
+      : String(error);
+    return {
+      status: 'error',
+      message,
+    };
   }
 }
